@@ -1,0 +1,25 @@
+---
+id: tap-events
+name: 'Tap: events (Storage queue)'
+version: 1.0.0
+summary: Every CloudEvent from every topic, kept without expiry for the Intelligence domain. Survives the kill switch.
+owners:
+- platform-team
+address: https://sttapintplatdemo.queue.core.windows.net/tap-events
+protocols:
+- https
+deliveryGuarantee: at-least-once
+---
+
+## Overview
+
+The events half of the tap (<Link href="/docs/custom/platform/04-tap-by-default">tap by default</Link>).
+The platform creates a `tap` subscription for all event types on every topic, so no producer
+can forget it or opt out.
+
+| Property | Value |
+|---|---|
+| Resource | `sttapintplatdemo`, resource group `rg-intplat-tap` (never deleted by the kill switch) |
+| Retention | No expiry, until the Intelligence domain drains it (phase 2) |
+| Limit | 64 KB per message; larger events go to the `tap-deadletter` container |
+| Authentication | Entra ID only. Topics deliver with their own managed identity. |

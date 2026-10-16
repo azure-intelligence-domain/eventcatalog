@@ -1,0 +1,23 @@
+---
+id: tap-telemetry
+name: 'Tap: telemetry (Log Analytics export)'
+version: 1.0.0
+summary: Every API call, dependency and error, and the Event Grid and Service Bus logs, exported continuously from Log Analytics.
+owners:
+- platform-team
+address: https://sttapintplatdemo.blob.core.windows.net/
+protocols:
+- https
+deliveryGuarantee: at-least-once
+---
+
+## Overview
+
+The telemetry half of the tap. Log Analytics exports these tables continuously into containers
+named `am-<table>`:
+
+`AppRequests` · `AppDependencies` · `AppExceptions` · `AppTraces` · `AegDeliveryFailureLogs` ·
+`AegPublishFailureLogs` · `AZMSOperationalLogs`
+
+Every request carries its `Correlation-Id`, so calls, events and deployments of the same journey
+can be joined. Telemetry above the daily cap (0.15 GB) is neither ingested nor exported.

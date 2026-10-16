@@ -1,0 +1,27 @@
+---
+title: Agent gateway
+summary: AI agents reach the integration platform through their own gateway, with their own identity, and every action is audited.
+owners:
+  - platform-team
+---
+
+People and websites use `apim-intplat-demo`. AI agents use **`apim-intplat-agents`**:
+
+| Rule | How |
+|---|---|
+| Only agents | An Entra ID token for the `intplat-agent-gateway` application with the `Agent.Act` role. Otherwise `401` Problem Details. |
+| Only commands | Agents reach Process APIs in the `agents` product, never System APIs or source systems. |
+| Every action audited | Every call, reads included, goes to the tap with the agent's identity. |
+| Limited | 60 calls per minute per agent. |
+| One journey | The same `Correlation-Id` rule as every gateway. |
+
+```http
+GET /platform/health HTTP/1.1
+Host: apim-intplat-agents.azure-api.net
+Authorization: Bearer <agent token for api://<application id>>
+Ocp-Apim-Subscription-Key: <the agent's subscription key>
+Correlation-Id: ord-4711
+```
+
+MCP tools for agents come from an MCP server building block behind this gateway, governed by the
+same policies.

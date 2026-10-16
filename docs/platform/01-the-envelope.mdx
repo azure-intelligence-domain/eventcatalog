@@ -31,7 +31,7 @@ the event is about (business keys), **which journey** it belongs to (correlation
 |---|---|---|
 | CloudEvents core | `specversion`, `id`, `source`, `type`, `time`, `datacontenttype` | Required. `time` in UTC. `type` is reverse-DNS with at least four segments. |
 | Journey | `correlationid` | Required, for example `ord-4711`. |
-| Business keys | `customerid`, `orderid`, `partnerid` | At least one is required. |
+| Business keys | `customerid`, `orderid`, `partnerid`, `componentid` | At least one is required. `componentid` (envelope 1.1.0) names the building block or flow, for platform events such as deployments. |
 | Tracing | `traceparent`, `tracestate` | Optional, W3C Trace Context. |
 | Payload | `data` | Defined per event type in the producer's contract, camelCase. |
 
