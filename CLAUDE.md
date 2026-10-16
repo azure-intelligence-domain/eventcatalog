@@ -20,3 +20,6 @@ repository; this repository follows ADR 0009.
   release (copied by discovery) and are shown with `components/bpmn-viewer.astro` (bpmn-js; the
   bpmn.io watermark must stay visible).
 - A 0.x release is cataloged as draft. Operations are queries (GET) or commands (other methods).
+- After adding or upgrading a dependency, regenerate the lockfile from scratch
+  (`rm -rf node_modules package-lock.json && npm install`): an incremental `npm install <pkg>`
+  on macOS drops Linux-only optional dependencies and breaks `npm ci` in CI.
