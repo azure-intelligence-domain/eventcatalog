@@ -43,8 +43,10 @@ test('the domain is read from the contract', async () => {
 
 test('producers send, consumers receive, APIs land in their domain', async () => {
   const catalog = mkdtempSync(join(tmpdir(), 'catalog-'));
-  for (const item of ['eventcatalog.config.js', 'package.json', 'domains', 'teams', 'public']) {
-    cpSync(item, join(catalog, item), { recursive: true });
+  // Only what is in git: the generated catalog (real services and messages) must not leak in.
+  const tracked = execFileSync('git', ['ls-files', 'eventcatalog.config.js', 'package.json', 'domains', 'teams', 'public'], { encoding: 'utf8' });
+  for (const file of tracked.split('\n').filter(Boolean)) {
+    cpSync(file, join(catalog, file), { recursive: true });
   }
   symlinkSync(join(process.cwd(), 'node_modules'), join(catalog, 'node_modules'));
   writeFileSync(join(catalog, 'sources.json'), JSON.stringify(await sources()));
