@@ -60,6 +60,63 @@ stateDiagram-v2
 
 Payment status is separate (`unpaid`, `invoiced`, `paid`): an order can be shipped and still unpaid.
 
+## The brain and the hands
+
+The Order Process API (Function) decides; Logic Apps move data between systems.
+
+```mermaid
+flowchart LR
+    subgraph callers["Callers"]
+        people["People / websites"]
+        agents["AI agents"]
+    end
+    subgraph gw["API Management"]
+        apimH{{"apim-intplat-demo"}}
+        apimA{{"apim-intplat-agents"}}
+    end
+    subgraph order["Order domain · the brain"]
+        papi["Order Process API<br/>Function (Python)<br/>commands · queries · state machine<br/>idempotency · 409 · envelope"]
+        qOrder[("sbq-process-api-order<br/>facts from other domains")]
+    end
+    subgraph topics["Event Grid"]
+        tOrder[["evgt-intplat-order<br/>OrderPlaced · OrderConfirmed · ..."]]
+        tFin[["evgt-intplat-finance<br/>SalesOrderAccepted · InvoiceIssued · PaymentReceived"]]
+        tSup[["evgt-intplat-supply<br/>StockReserved"]]
+        tLog[["evgt-intplat-logistics<br/>ShipmentDispatched · ShipmentDelivered"]]
+    end
+    subgraph flows["Integration flows · the hands · Logic Apps"]
+        la1["order-to-erp<br/>on OrderPlaced, OrderAmended,<br/>OrderCancelled ..."]
+        la2["order-to-warehouse<br/>on OrderConfirmed"]
+        la3["stock-to-3pl<br/>on StockReserved"]
+    end
+    subgraph sys["System APIs · Functions"]
+        sSf["Salesforce System API"]
+        sSap["SAP System API"]
+        sWms["WMS System API"]
+        s3pl["3PL System API"]
+    end
+    subgraph src["Source systems"]
+        dbSf[("Salesforce<br/>system of record: orders")]
+        dbSap[("SAP")]
+        dbWms[("WMS")]
+        p3pl["3PL partner API"]
+    end
+
+    people --> apimH --> papi
+    agents --> apimA --> papi
+    papi -- "via gateway" --> sSf --> dbSf
+    papi -- "publish" --> tOrder
+    tOrder --> la1 & la2
+    la1 -- "via gateway" --> sSap --> dbSap
+    la2 -- "via gateway" --> sWms --> dbWms
+    sSap -- "publish" --> tFin
+    sWms -- "publish" --> tSup
+    tSup --> la3
+    la3 -- "via gateway" --> s3pl --> p3pl
+    s3pl -- "publish" --> tLog
+    tFin & tSup & tLog --> qOrder --> papi
+```
+
 ## Order to delivery
 
 <BpmnViewer file="bpmn/process-api-order/order-to-delivery.bpmn" title="Order to delivery (BPMN 2.0)" height={520} />
