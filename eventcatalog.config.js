@@ -19,6 +19,9 @@ function generators() {
     if (!groups.has(key)) groups.set(key, { kind: source.kind, domain: source.domain, services: [] });
     groups.get(key).services.push({
       id: source.service,
+      // A service's version is its repository's release: its OpenAPI and AsyncAPI contracts may
+      // carry different versions, but they are released (and cataloged) together.
+      version: source.release.replace(/^v/, ''),
       path: source.path,
       owners: source.owners,
       draft: source.draft, // 0.x releases are designs, not live services
