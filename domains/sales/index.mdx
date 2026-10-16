@@ -4,9 +4,17 @@ name: Sales
 version: 1.0.0
 summary: 'Customers, opportunities and orders: where a deal becomes an order.'
 owners:
-- sales-team
+  - sales-team
+entities:
+  - id: Account
+  - id: Opportunity
+  - id: SalesforceOrder
+  - id: SalesforceOrderItem
+  - id: Product
+services:
+  - id: system-api-salesforce
+    version: 1.0.0
 ---
-
 ## Overview
 
 The sales domain knows the customer and the deal. In the demo story, ACME's opportunity is
@@ -20,3 +28,9 @@ closed-won in Salesforce and order 4711 is created on 3 October.
 
 Services and events of this domain appear here automatically as soon as their repository
 releases a contract.
+
+## Data model
+
+Salesforce's own model, with Salesforce's naming (PascalCase, `__c` custom fields). The Salesforce System API translates the Order record to the order domain's contract; nobody else reads this model.
+
+<EntityMap id="sales" />

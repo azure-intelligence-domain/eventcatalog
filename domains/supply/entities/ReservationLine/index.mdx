@@ -1,0 +1,27 @@
+---
+id: ReservationLine
+name: Reservation Line
+version: 1.0.0
+summary: One product of a reservation.
+owners:
+- supply-team
+properties:
+- name: productId
+  type: string
+  required: true
+  description: The product.
+  references: Product
+  relationType: references
+- name: quantity
+  type: integer
+  required: true
+  description: Units reserved.
+---
+
+## Overview
+
+One product of a reservation.
+
+Designed; built in step 6 (WMS System API, supply-intake).
+
+<EntityPropertiesTable />

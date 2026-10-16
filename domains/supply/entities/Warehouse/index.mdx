@@ -1,0 +1,29 @@
+---
+id: Warehouse
+name: Warehouse
+version: 1.0.0
+summary: Where stock is kept.
+owners:
+- supply-team
+properties:
+- name: warehouseId
+  type: string
+  required: true
+  description: Warehouse id, e.g. BRU-1.
+- name: name
+  type: string
+  required: true
+  description: Name.
+- name: countryCode
+  type: string
+  required: true
+  description: ISO 3166-1 alpha-2.
+---
+
+## Overview
+
+Where stock is kept.
+
+Designed; built in step 6 (WMS System API, supply-intake).
+
+<EntityPropertiesTable />

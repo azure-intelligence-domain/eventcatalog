@@ -12,6 +12,8 @@ services:
     version: 1.0.0
   - id: integration-platform
     version: 1.1.0
+entities:
+  - id: CloudEvent
 ---
 ## Overview
 
@@ -40,3 +42,9 @@ flowchart TB
 | Every interface has a contract | OpenAPI and AsyncAPI, checked against the <Link href="/docs/custom/platform/02-contracts-and-rules">adidas API guidelines</Link> |
 | No breaking changes | The contract check compares every change with the last release |
 | Everything is cataloged | Released contracts appear here automatically (<Link href="/docs/custom/platform/03-add-your-service">how</Link>) |
+
+## Data model
+
+The platform has no business data of its own: it carries events. Every event has the same envelope, and its business keys point into the domains' models. That is what lets the Intelligence domain join the facts of every domain into one story.
+
+<EntityMap id="platform" />

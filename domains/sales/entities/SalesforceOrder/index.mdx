@@ -1,0 +1,96 @@
+---
+id: SalesforceOrder
+name: Order (Salesforce)
+version: 1.0.0
+summary: 'Salesforce''s Order record: the system of record of every order. Salesforce naming: PascalCase and __c
+  custom fields.'
+owners:
+- sales-team
+aggregateRoot: true
+identifier: OrderNumber
+properties:
+- name: id
+  type: string
+  required: true
+  description: Record id, e.g. 801Ad0000004711AAA.
+- name: OrderNumber
+  type: string
+  required: true
+  description: 'Auto-number, e.g. 4711: the platform''s orderid.'
+- name: AccountId
+  type: string
+  required: true
+  description: The customer.
+  references: Account
+  relationType: references
+- name: OpportunityId
+  type: string
+  required: false
+  description: The deal it came from.
+  references: Opportunity
+  relationType: references
+- name: Status
+  type: string
+  required: true
+  description: Salesforce's own status.
+  enum:
+  - Draft
+  - Activated
+  - Cancelled
+- name: Order_Status__c
+  type: string
+  required: true
+  description: The order domain's status.
+- name: Payment_Status__c
+  type: string
+  required: true
+  description: unpaid, invoiced, paid.
+- name: Channel__c
+  type: string
+  required: true
+  description: salesforce, webshop, agent.
+- name: OrderItems
+  type: array
+  required: true
+  description: The lines.
+  items:
+    type: SalesforceOrderItem
+  references: SalesforceOrderItem
+  relationType: hasMany
+- name: CurrencyIsoCode
+  type: string
+  required: true
+  description: ISO 4217.
+- name: TotalAmount
+  type: number
+  required: true
+  description: Computed by Salesforce.
+- name: ShippingStreet
+  type: string
+  required: true
+  description: Address, flattened (also PostalCode, City, CountryCode).
+- name: Requested_Delivery_Date__c
+  type: date
+  required: false
+  description: Requested delivery date.
+- name: Idempotency_Key__c
+  type: string
+  required: false
+  description: Key of the request that created it.
+- name: CreatedDate
+  type: date-time
+  required: true
+  description: UTC.
+- name: LastModifiedDate
+  type: date-time
+  required: true
+  description: UTC.
+---
+
+## Overview
+
+Salesforce's Order record: the system of record of every order. Salesforce naming: PascalCase and __c custom fields.
+
+Order and OrderItem are simulated in Cosmos DB (backend-systems); Account, Opportunity and Product are Salesforce's own, not simulated yet.
+
+<EntityPropertiesTable />

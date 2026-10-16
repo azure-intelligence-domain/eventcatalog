@@ -1,0 +1,37 @@
+---
+id: StockItem
+name: Stock Item
+version: 1.0.0
+summary: Stock of one product in one warehouse.
+owners:
+- supply-team
+properties:
+- name: productId
+  type: string
+  required: true
+  description: The product.
+  references: Product
+  relationType: references
+- name: warehouseId
+  type: string
+  required: true
+  description: The warehouse.
+  references: Warehouse
+  relationType: references
+- name: onHand
+  type: integer
+  required: true
+  description: Units in the warehouse.
+- name: reserved
+  type: integer
+  required: true
+  description: Units reserved for orders.
+---
+
+## Overview
+
+Stock of one product in one warehouse.
+
+Designed; built in step 6 (WMS System API, supply-intake).
+
+<EntityPropertiesTable />

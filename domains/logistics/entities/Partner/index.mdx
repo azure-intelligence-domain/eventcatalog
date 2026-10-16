@@ -1,0 +1,30 @@
+---
+id: Partner
+name: Partner (3PL)
+version: 1.0.0
+summary: A third-party logistics partner and the API version it speaks.
+owners:
+- logistics-team
+identifier: partnerId
+properties:
+- name: partnerId
+  type: string
+  required: true
+  description: Partner id. Business key partnerid.
+- name: name
+  type: string
+  required: true
+  description: Name.
+- name: apiVersion
+  type: string
+  required: true
+  description: Version of the partner's shipment API the mapping targets, e.g. 2.4.
+---
+
+## Overview
+
+A third-party logistics partner and the API version it speaks.
+
+Designed; built in step 6 (3PL System API, logistics-intake).
+
+<EntityPropertiesTable />

@@ -5,6 +5,10 @@ version: 1.0.0
 summary: 'Invoices and payments: what is billed and what is paid.'
 owners:
 - finance-team
+entities:
+  - id: SalesOrder
+  - id: Invoice
+  - id: Payment
 ---
 
 ## Overview
@@ -20,3 +24,9 @@ and has the invoice ready.
 
 Services and events of this domain appear here automatically as soon as their repository
 releases a contract.
+
+## Data model
+
+What SAP knows about an order once it reached the ERP: the sales order, its invoice and the payments against it. Designed now, built in step 6.
+
+<EntityMap id="finance" />

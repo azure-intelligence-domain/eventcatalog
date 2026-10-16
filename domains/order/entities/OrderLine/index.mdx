@@ -1,0 +1,37 @@
+---
+id: OrderLine
+name: Order Line
+version: 1.0.0
+summary: One product in an order; line numbers are assigned by the order domain.
+owners:
+- order-team
+properties:
+- name: lineNumber
+  type: integer
+  required: true
+  description: Position in the order.
+- name: productId
+  type: string
+  required: true
+  description: The product.
+  references: Product
+  relationType: references
+- name: quantity
+  type: integer
+  required: true
+  description: Units ordered.
+- name: unitPrice
+  type: Money
+  required: true
+  description: Price per unit.
+  references: Money
+  relationType: references
+---
+
+## Overview
+
+One product in an order; line numbers are assigned by the order domain.
+
+Built (process-api-order 1.0.0). The order is kept in Salesforce, the system of record.
+
+<EntityPropertiesTable />

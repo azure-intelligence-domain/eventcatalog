@@ -1,0 +1,35 @@
+---
+id: SalesforceOrderItem
+name: Order Item (Salesforce)
+version: 1.0.0
+summary: An OrderItem of a Salesforce Order.
+owners:
+- sales-team
+properties:
+- name: OrderItemNumber
+  type: integer
+  required: true
+  description: Line number.
+- name: Product2Id
+  type: string
+  required: true
+  description: The product.
+  references: Product
+  relationType: references
+- name: Quantity
+  type: integer
+  required: true
+  description: Units.
+- name: UnitPrice
+  type: number
+  required: true
+  description: Price per unit, in the order's currency.
+---
+
+## Overview
+
+An OrderItem of a Salesforce Order.
+
+Order and OrderItem are simulated in Cosmos DB (backend-systems); Account, Opportunity and Product are Salesforce's own, not simulated yet.
+
+<EntityPropertiesTable />

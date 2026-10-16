@@ -1,0 +1,44 @@
+---
+id: Opportunity
+name: Opportunity
+version: 1.0.0
+summary: A deal with an account; closed-won is where an order starts.
+owners:
+- sales-team
+properties:
+- name: OpportunityId
+  type: string
+  required: true
+  description: Opportunity id.
+- name: AccountId
+  type: string
+  required: true
+  description: The account.
+  references: Account
+  relationType: references
+- name: StageName
+  type: string
+  required: true
+  description: Sales stage.
+  enum:
+  - Prospecting
+  - Negotiation
+  - Closed Won
+  - Closed Lost
+- name: Amount
+  type: number
+  required: true
+  description: Expected value.
+- name: CloseDate
+  type: date
+  required: true
+  description: Expected or actual close.
+---
+
+## Overview
+
+A deal with an account; closed-won is where an order starts.
+
+Order and OrderItem are simulated in Cosmos DB (backend-systems); Account, Opportunity and Product are Salesforce's own, not simulated yet.
+
+<EntityPropertiesTable />

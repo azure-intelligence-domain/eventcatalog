@@ -1,0 +1,52 @@
+---
+id: SalesOrder
+name: Sales Order (SAP)
+version: 1.0.0
+summary: 'The ERP''s copy of an order, after credit and availability checks: accepted or refused.'
+owners:
+- finance-team
+aggregateRoot: true
+identifier: erpOrderNumber
+properties:
+- name: erpOrderNumber
+  type: string
+  required: true
+  description: SAP sales order number, e.g. 8000043217.
+- name: orderId
+  type: string
+  required: true
+  description: The order. Business key orderid.
+  references: Order
+  relationType: references
+- name: customerId
+  type: string
+  required: true
+  description: The customer. Business key customerid.
+  references: Account
+  relationType: references
+- name: status
+  type: string
+  required: true
+  description: Outcome of the checks.
+  enum:
+  - accepted
+  - refused
+- name: refusalReason
+  type: string
+  required: false
+  description: Why it was refused.
+- name: netValue
+  type: Money
+  required: true
+  description: Order value.
+  references: Money
+  relationType: references
+---
+
+## Overview
+
+The ERP's copy of an order, after credit and availability checks: accepted or refused.
+
+Designed; built in step 6 (SAP System API, finance-intake).
+
+<EntityPropertiesTable />

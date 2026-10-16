@@ -1,0 +1,29 @@
+---
+id: Product
+name: Product
+version: 1.0.0
+summary: 'Salesforce Product2: what can be sold, e.g. SKU-1042. Its id is used by every domain.'
+owners:
+- sales-team
+properties:
+- name: Product2Id
+  type: string
+  required: true
+  description: Product id, e.g. SKU-1042.
+- name: Name
+  type: string
+  required: true
+  description: Product name.
+- name: ProductCode
+  type: string
+  required: true
+  description: Code.
+---
+
+## Overview
+
+Salesforce Product2: what can be sold, e.g. SKU-1042. Its id is used by every domain.
+
+Order and OrderItem are simulated in Cosmos DB (backend-systems); Account, Opportunity and Product are Salesforce's own, not simulated yet.
+
+<EntityPropertiesTable />

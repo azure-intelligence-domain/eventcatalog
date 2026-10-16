@@ -1,0 +1,25 @@
+---
+id: Money
+name: Money
+version: 1.0.0
+summary: 'Value object: an amount in one currency.'
+owners:
+- order-team
+properties:
+- name: value
+  type: number
+  required: true
+  description: The amount.
+- name: currency
+  type: string
+  required: true
+  description: ISO 4217, e.g. EUR.
+---
+
+## Overview
+
+Value object: an amount in one currency.
+
+Built (process-api-order 1.0.0). The order is kept in Salesforce, the system of record.
+
+<EntityPropertiesTable />

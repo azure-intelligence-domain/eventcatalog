@@ -1,0 +1,99 @@
+---
+id: Order
+name: Order
+version: 1.0.0
+summary: 'The order across its lifecycle: a state machine, with payment status as a separate dimension.'
+owners:
+- order-team
+aggregateRoot: true
+identifier: orderId
+properties:
+- name: orderId
+  type: string
+  required: true
+  description: Order id, assigned by Salesforce (OrderNumber), e.g. 4711. Business key orderid.
+- name: customerId
+  type: string
+  required: true
+  description: The customer (Salesforce Account). Business key customerid.
+  references: Account
+  relationType: references
+- name: channel
+  type: string
+  required: true
+  description: Where it was placed.
+  enum:
+  - salesforce
+  - webshop
+  - agent
+- name: status
+  type: string
+  required: true
+  description: Lifecycle status (state machine).
+  enum:
+  - placed
+  - confirmed
+  - rejected
+  - onHold
+  - readyForShipment
+  - shipped
+  - delivered
+  - completed
+  - cancelled
+- name: paymentStatus
+  type: string
+  required: true
+  description: 'Separate from status: shipped can be unpaid.'
+  enum:
+  - unpaid
+  - invoiced
+  - paid
+- name: orderLines
+  type: array
+  required: true
+  description: The products ordered.
+  items:
+    type: OrderLine
+  references: OrderLine
+  relationType: hasMany
+- name: totalAmount
+  type: Money
+  required: true
+  description: Sum of the lines.
+  references: Money
+  relationType: references
+- name: deliveryAddress
+  type: DeliveryAddress
+  required: true
+  description: Where it goes.
+  references: DeliveryAddress
+  relationType: references
+- name: requestedDeliveryDate
+  type: date
+  required: false
+  description: Requested delivery date.
+- name: holdReason
+  type: string
+  required: false
+  description: Why it is on hold, when it is.
+- name: cancellationReason
+  type: string
+  required: false
+  description: Why it was cancelled (soft delete).
+- name: createdAt
+  type: date-time
+  required: true
+  description: Placed at, UTC.
+- name: updatedAt
+  type: date-time
+  required: true
+  description: Last change, UTC.
+---
+
+## Overview
+
+The order across its lifecycle: a state machine, with payment status as a separate dimension.
+
+Built (process-api-order 1.0.0). The order is kept in Salesforce, the system of record.
+
+<EntityPropertiesTable />

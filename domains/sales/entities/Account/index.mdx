@@ -1,0 +1,31 @@
+---
+id: Account
+name: Account
+version: 1.0.0
+summary: A customer, e.g. ACME. Its id is the platform's customerid.
+owners:
+- sales-team
+aggregateRoot: true
+identifier: AccountId
+properties:
+- name: AccountId
+  type: string
+  required: true
+  description: Account id, e.g. ACME. Business key customerid.
+- name: Name
+  type: string
+  required: true
+  description: Customer name.
+- name: BillingCountryCode
+  type: string
+  required: false
+  description: ISO 3166-1 alpha-2.
+---
+
+## Overview
+
+A customer, e.g. ACME. Its id is the platform's customerid.
+
+Order and OrderItem are simulated in Cosmos DB (backend-systems); Account, Opportunity and Product are Salesforce's own, not simulated yet.
+
+<EntityPropertiesTable />

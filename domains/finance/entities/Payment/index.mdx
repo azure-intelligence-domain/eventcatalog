@@ -1,0 +1,37 @@
+---
+id: Payment
+name: Payment
+version: 1.0.0
+summary: Money received against an invoice.
+owners:
+- finance-team
+properties:
+- name: paymentId
+  type: string
+  required: true
+  description: Payment id.
+- name: invoiceNumber
+  type: string
+  required: true
+  description: The invoice.
+  references: Invoice
+  relationType: references
+- name: amount
+  type: Money
+  required: true
+  description: Amount received.
+  references: Money
+  relationType: references
+- name: receivedAt
+  type: date-time
+  required: true
+  description: UTC.
+---
+
+## Overview
+
+Money received against an invoice.
+
+Designed; built in step 6 (SAP System API, finance-intake).
+
+<EntityPropertiesTable />

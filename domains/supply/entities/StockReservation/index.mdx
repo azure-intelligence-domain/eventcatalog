@@ -1,0 +1,55 @@
+---
+id: StockReservation
+name: Stock Reservation
+version: 1.0.0
+summary: Stock set aside for one order.
+owners:
+- supply-team
+aggregateRoot: true
+identifier: reservationId
+properties:
+- name: reservationId
+  type: string
+  required: true
+  description: Reservation id.
+- name: orderId
+  type: string
+  required: true
+  description: The order. Business key orderid.
+  references: Order
+  relationType: references
+- name: warehouseId
+  type: string
+  required: true
+  description: Where it is reserved.
+  references: Warehouse
+  relationType: references
+- name: lines
+  type: array
+  required: true
+  description: What is reserved.
+  items:
+    type: ReservationLine
+  references: ReservationLine
+  relationType: hasMany
+- name: status
+  type: string
+  required: true
+  description: Lifecycle.
+  enum:
+  - reserved
+  - released
+  - picked
+- name: reservedAt
+  type: date-time
+  required: true
+  description: UTC.
+---
+
+## Overview
+
+Stock set aside for one order.
+
+Designed; built in step 6 (WMS System API, supply-intake).
+
+<EntityPropertiesTable />

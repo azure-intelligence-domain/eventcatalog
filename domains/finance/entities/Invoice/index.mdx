@@ -1,0 +1,50 @@
+---
+id: Invoice
+name: Invoice
+version: 1.0.0
+summary: What the customer is billed for one sales order.
+owners:
+- finance-team
+aggregateRoot: true
+identifier: invoiceNumber
+properties:
+- name: invoiceNumber
+  type: string
+  required: true
+  description: Invoice number.
+- name: erpOrderNumber
+  type: string
+  required: true
+  description: The sales order.
+  references: SalesOrder
+  relationType: references
+- name: amount
+  type: Money
+  required: true
+  description: Amount due.
+  references: Money
+  relationType: references
+- name: issuedAt
+  type: date-time
+  required: true
+  description: UTC.
+- name: dueDate
+  type: date
+  required: true
+  description: Payment due.
+- name: status
+  type: string
+  required: true
+  description: Open until fully paid.
+  enum:
+  - open
+  - paid
+---
+
+## Overview
+
+What the customer is billed for one sales order.
+
+Designed; built in step 6 (SAP System API, finance-intake).
+
+<EntityPropertiesTable />

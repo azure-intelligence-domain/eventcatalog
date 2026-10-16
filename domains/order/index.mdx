@@ -7,13 +7,14 @@ summary: >-
   delivered, completed, or cancelled on the way.
 owners:
   - order-team
-badges:
-  - content: Design (0.x)
-    backgroundColor: yellow
-    textColor: yellow
 services:
   - id: process-api-order
-    version: 0.1.0
+    version: 1.0.0
+entities:
+  - id: Order
+  - id: OrderLine
+  - id: DeliveryAddress
+  - id: Money
 ---
 import BpmnViewer from '@catalog/components/bpmn-viewer.astro';
 
@@ -84,10 +85,10 @@ flowchart LR
         tSup[["evgt-intplat-supply<br/>StockReserved"]]
         tLog[["evgt-intplat-logistics<br/>ShipmentDispatched · ShipmentDelivered"]]
     end
-    subgraph flows["Integration flows · the hands · Logic Apps"]
-        la1["order-to-erp<br/>on OrderPlaced, OrderAmended,<br/>OrderCancelled ..."]
-        la2["order-to-warehouse<br/>on OrderConfirmed"]
-        la3["stock-to-3pl<br/>on StockReserved"]
+    subgraph flows["Integration flows · the hands · one Logic App per receiving domain"]
+        la1["finance-intake<br/>on OrderPlaced, OrderAmended,<br/>OrderCancelled"]
+        la2["supply-intake<br/>on OrderConfirmed, OrderCancelled"]
+        la3["logistics-intake<br/>on StockReserved"]
     end
     subgraph sys["System APIs · Functions"]
         sSf["Salesforce System API"]
@@ -122,3 +123,9 @@ flowchart LR
 <BpmnViewer file="bpmn/process-api-order/order-to-delivery.bpmn" title="Order to delivery (BPMN 2.0)" height={520} />
 
 The command and query flows are on the <Link href="/docs/custom/order/01-order-flows">order flows</Link> page.
+
+## Data model
+
+The order as the order domain sees it: one aggregate, the **Order**, with its lines and two value objects. Salesforce keeps it (system of record); the customer and the product belong to the sales domain.
+
+<EntityMap id="order" />

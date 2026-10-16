@@ -1,0 +1,66 @@
+---
+id: CloudEvent
+name: Event (envelope)
+version: 1.0.0
+summary: 'Every event on the platform: a CloudEvent with a correlation id and business keys (contracts envelope
+  1.1.0).'
+owners:
+- platform-team
+aggregateRoot: true
+identifier: id
+properties:
+- name: id
+  type: string
+  required: true
+  description: Unique per event.
+- name: source
+  type: string
+  required: true
+  description: Who published it, e.g. /process-api-order/1.0.0.
+- name: type
+  type: string
+  required: true
+  description: The fact, e.g. com.acme.order.placed.
+- name: time
+  type: date-time
+  required: true
+  description: When it happened, UTC.
+- name: correlationid
+  type: string
+  required: true
+  description: The business journey, e.g. ord-4711.
+- name: customerid
+  type: string
+  required: false
+  description: 'Business key: the customer.'
+  references: Account
+  relationType: references
+- name: orderid
+  type: string
+  required: false
+  description: 'Business key: the order.'
+  references: Order
+  relationType: references
+- name: partnerid
+  type: string
+  required: false
+  description: 'Business key: the partner.'
+  references: Partner
+  relationType: references
+- name: componentid
+  type: string
+  required: false
+  description: 'Business key: the API or flow, e.g. logistics-intake.'
+- name: data
+  type: object
+  required: true
+  description: 'The payload: owned by the producer.'
+---
+
+## Overview
+
+Every event on the platform: a CloudEvent with a correlation id and business keys (contracts envelope 1.1.0).
+
+Built (contracts envelope 1.1.0). The business keys tie every domain's facts together.
+
+<EntityPropertiesTable />

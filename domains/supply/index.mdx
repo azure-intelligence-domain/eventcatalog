@@ -5,6 +5,11 @@ version: 1.0.0
 summary: 'Stock and reservations in the warehouse: whether the goods are there.'
 owners:
 - supply-team
+entities:
+  - id: Warehouse
+  - id: StockItem
+  - id: StockReservation
+  - id: ReservationLine
 ---
 
 ## Overview
@@ -20,3 +25,9 @@ order 4711 and hands it over to the third-party logistics flow.
 
 Services and events of this domain appear here automatically as soon as their repository
 releases a contract.
+
+## Data model
+
+What the WMS knows: stock per product and warehouse, and the reservation for each order. Designed now, built in step 6.
+
+<EntityMap id="supply" />

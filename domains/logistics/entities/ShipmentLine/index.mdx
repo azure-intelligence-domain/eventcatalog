@@ -1,0 +1,27 @@
+---
+id: ShipmentLine
+name: Shipment Line
+version: 1.0.0
+summary: One product of a shipment.
+owners:
+- logistics-team
+properties:
+- name: productId
+  type: string
+  required: true
+  description: The product.
+  references: Product
+  relationType: references
+- name: quantity
+  type: integer
+  required: true
+  description: Units.
+---
+
+## Overview
+
+One product of a shipment.
+
+Designed; built in step 6 (3PL System API, logistics-intake).
+
+<EntityPropertiesTable />

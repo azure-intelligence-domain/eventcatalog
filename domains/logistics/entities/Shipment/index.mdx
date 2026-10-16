@@ -1,0 +1,75 @@
+---
+id: Shipment
+name: Shipment
+version: 1.0.0
+summary: The delivery of one order by a 3PL partner.
+owners:
+- logistics-team
+aggregateRoot: true
+identifier: shipmentId
+properties:
+- name: shipmentId
+  type: string
+  required: true
+  description: Shipment id.
+- name: orderId
+  type: string
+  required: true
+  description: The order. Business key orderid.
+  references: Order
+  relationType: references
+- name: partnerId
+  type: string
+  required: true
+  description: Who delivers. Business key partnerid.
+  references: Partner
+  relationType: references
+- name: reservationId
+  type: string
+  required: true
+  description: The stock it ships.
+  references: StockReservation
+  relationType: references
+- name: lines
+  type: array
+  required: true
+  description: What is shipped.
+  items:
+    type: ShipmentLine
+  references: ShipmentLine
+  relationType: hasMany
+- name: deliveryAddress
+  type: DeliveryAddress
+  required: true
+  description: Where it goes.
+  references: DeliveryAddress
+  relationType: references
+- name: status
+  type: string
+  required: true
+  description: Lifecycle.
+  enum:
+  - requested
+  - dispatched
+  - delivered
+- name: trackingNumber
+  type: string
+  required: false
+  description: The partner's tracking number.
+- name: dispatchedAt
+  type: date-time
+  required: false
+  description: UTC.
+- name: deliveredAt
+  type: date-time
+  required: false
+  description: UTC.
+---
+
+## Overview
+
+The delivery of one order by a 3PL partner.
+
+Designed; built in step 6 (3PL System API, logistics-intake).
+
+<EntityPropertiesTable />
