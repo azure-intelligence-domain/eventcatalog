@@ -44,7 +44,7 @@ jobs:
           retention-days: 7
 
   deploy:
-    name: Deploy to Azure Static Web Apps
+    name: Deploy to the storage static website
     needs: build
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
@@ -54,7 +54,6 @@ jobs:
       id-token: write
     env:
       RESOURCE_GROUP: rg-intplat-eventcatalog
-      APP: stapp-intplat-eventcatalog
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -72,27 +71,27 @@ jobs:
       - name: Infrastructure (what-if, then deploy)
         run: |
           az deployment group what-if -g "$RESOURCE_GROUP" -n eventcatalog -f infra/main.bicep
-          hostname=$(az deployment group create -g "$RESOURCE_GROUP" -n eventcatalog -f infra/main.bicep \
-            --query properties.outputs.hostname.value -o tsv)
-          echo "CATALOG_HOST=$hostname" >> "$GITHUB_ENV"
+          read -r account url < <(az deployment group create -g "$RESOURCE_GROUP" -n eventcatalog \
+            -f infra/main.bicep --query "[properties.outputs.accountName.value, properties.outputs.url.value]" -o tsv | paste -sd' ')
+          echo "ACCOUNT=$account" >> "$GITHUB_ENV"
+          echo "CATALOG_URL=${url%/}" >> "$GITHUB_ENV"
 
-      - name: Fetch the deployment token (never stored)
+      - name: Fetch the storage key (never stored)
         run: |
-          token=$(az staticwebapp secrets list -n "$APP" -g "$RESOURCE_GROUP" --query properties.apiKey -o tsv)
-          echo "::add-mask::$token"
-          echo "SWA_TOKEN=$token" >> "$GITHUB_ENV"
+          key=$(az storage account keys list -g "$RESOURCE_GROUP" -n "$ACCOUNT" --query "[0].value" -o tsv)
+          echo "::add-mask::$key"
+          echo "AZURE_STORAGE_KEY=$key" >> "$GITHUB_ENV"
 
-      - name: Upload the catalog
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ env.SWA_TOKEN }}
-          action: upload
-          app_location: dist
-          skip_app_build: true
-          skip_api_build: true
+      - name: Enable the static website and upload the catalog
+        env:
+          AZURE_STORAGE_ACCOUNT: ${{ env.ACCOUNT }}
+        run: |
+          az storage blob service-properties update --static-website \
+            --index-document index.html --404-document 404.html --only-show-errors -o none
+          az storage blob sync --container '$web' --source dist --delete-destination true --only-show-errors -o none
 
       - name: Smoke test
         run: |
-          curl -fsS "https://${CATALOG_HOST}/" | grep -q "Azure Intelligence Domain"
-          curl -fsS "https://${CATALOG_HOST}/docs/custom/platform/01-the-envelope" | grep -q "correlationid"
-          echo "✅ https://${CATALOG_HOST}"
+          curl -fsS "$CATALOG_URL/" | grep -q "Azure Intelligence Domain"
+          curl -fsS "$CATALOG_URL/docs/custom/platform/01-the-envelope/" | grep -q "correlationid"
+          echo "✅ $CATALOG_URL"

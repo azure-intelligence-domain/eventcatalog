@@ -1,27 +1,33 @@
-// The catalog's hosting: Azure Static Web Apps, Free tier (€0).
+// The catalog's hosting: an Azure Storage static website in Belgium Central (about €0).
+// Static Web Apps is only offered in West Europe within Europe, and West Europe does not accept
+// new customers for this subscription (ADR 0009).
 // Deployed by this repository's own identity, which only has rights on rg-intplat-eventcatalog.
 
-@description('Static Web Apps is not offered in Belgium Central (ADR 0003 fallback).')
-param location string = 'westeurope'
+param location string = 'belgiumcentral'
 
-resource catalog 'Microsoft.Web/staticSites@2023-12-01' = {
-  name: 'stapp-intplat-eventcatalog'
+resource catalog 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+  name: 'stcatalog${uniqueString(resourceGroup().id)}'
   location: location
   tags: {
     project: 'ai-intelligence-domain'
     component: 'eventcatalog'
     owner: 'platform-team'
   }
+  kind: 'StorageV2'
   sku: {
-    name: 'Free'
-    tier: 'Free'
+    name: 'Standard_LRS'
   }
   properties: {
-    // Deployed from GitHub Actions with a token fetched at deploy time: no repository link,
-    // no stored deployment token, no preview environments.
-    stagingEnvironmentPolicy: 'Disabled'
-    allowConfigFileUpdates: true
+    accessTier: 'Hot'
+    minimumTlsVersion: 'TLS1_2'
+    supportsHttpsTrafficOnly: true
+    // The static website endpoint serves $web anonymously; nothing else is public.
+    allowBlobPublicAccess: false
+    // The deploy identity has control-plane rights only (landing zone design), so the pipeline
+    // fetches the account key at deploy time to configure the website and upload. Never stored.
+    allowSharedKeyAccess: true
   }
 }
 
-output hostname string = catalog.properties.defaultHostname
+output accountName string = catalog.name
+output url string = catalog.properties.primaryEndpoints.web
