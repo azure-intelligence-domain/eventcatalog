@@ -92,6 +92,15 @@ jobs:
 
       - name: Smoke test
         run: |
-          curl -fsS "$CATALOG_URL/" | grep -q "Azure Intelligence Domain"
-          curl -fsS "$CATALOG_URL/docs/custom/platform/01-the-envelope/" | grep -q "correlationid"
-          echo "✅ $CATALOG_URL"
+          # A freshly enabled static website can take a minute before it serves content.
+          check() { curl -fsS "$CATALOG_URL/$1" | grep -q "$2"; }
+          for attempt in $(seq 1 12); do
+            if check "" "Azure Intelligence Domain" && check "docs/custom/platform/01-the-envelope/" "correlationid"; then
+              echo "✅ $CATALOG_URL"; exit 0
+            fi
+            for page in "" "index.html" "docs/custom/platform/01-the-envelope/"; do
+              echo "attempt $attempt: /$page -> $(curl -s -o /dev/null -w '%{http_code}' "$CATALOG_URL/$page")"
+            done
+            sleep 10
+          done
+          exit 1
