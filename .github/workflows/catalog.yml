@@ -104,6 +104,12 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Acquire Event Grid token (for the deployment event)
+        run: |
+          token=$(az account get-access-token --resource https://eventgrid.azure.net --query accessToken -o tsv)
+          echo "::add-mask::$token"
+          echo "EVENTGRID_TOKEN=$token" >> "$GITHUB_ENV"
+
       - name: Infrastructure (what-if, then deploy)
         run: |
           az deployment group what-if -g "$RESOURCE_GROUP" -n eventcatalog -f infra/main.bicep
@@ -140,3 +146,12 @@ jobs:
             sleep 10
           done
           exit 1
+
+      - name: Deployment event
+        if: always()
+        uses: azure-intelligence-domain/integration-platform/.github/actions/deployment-event@v1.1.0
+        with:
+          token: ${{ env.EVENTGRID_TOKEN }}
+          component: eventcatalog
+          version: ${{ github.sha }}
+          status: ${{ job.status }}
