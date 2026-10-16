@@ -1,0 +1,13 @@
+---
+id: order-team
+name: Order Domain Team
+summary: "Owns the order domain: the lifecycle of an order across systems, from placed to completed, and its business events."
+---
+
+## Overview
+
+The order domain team owns the Order Process API and the order's business events (OrderPlaced,
+OrderConfirmed, OrderCancelled, OrderPaid, ...). It turns facts from finance, supply and logistics
+into order facts through policies, and publishes every change with orderid and customerid.
+
+Repositories in the [azure-intelligence-domain](https://github.com/azure-intelligence-domain) organisation.

@@ -6,7 +6,10 @@
 // 2. The domain comes from the contract itself (adidas conventions, enforced by the contract
 //    check): the AsyncAPI id urn:azure-intelligence-domain:<domain>:<name>, or the OpenAPI title
 //    "[Domain] Name API". The owner is that domain's team: <domain>-team.
-// 3. The envelope schema of the latest contracts release is fetched for the platform docs.
+// 3. A 0.x release is a design (draft): it is cataloged, marked as draft.
+// 4. BPMN flows in docs/bpmn/ of the release are copied to public/bpmn/<repository>/, for the
+//    BpmnViewer component.
+// 5. The envelope schema of the latest contracts release is fetched for the platform docs.
 //
 // Writes sources.json (read by eventcatalog.config.js) and docs/platform/envelope.schema.json.
 // Set GITHUB_TOKEN to avoid the GitHub API rate limit for anonymous requests.
@@ -59,7 +62,13 @@ export function forGenerator(contract) {
         .filter(([key]) => HTTP_METHODS.has(key))
         .map(([method, operation]) => [
           method,
-          { ...operation, parameters: [...shared, ...(operation.parameters ?? [])] },
+          {
+            ...operation,
+            parameters: [...shared, ...(operation.parameters ?? [])],
+            // EventCatalog files every operation as a query unless told otherwise:
+            // reads are queries, everything that changes state is a command.
+            'x-eventcatalog-message-type': method === 'get' ? 'query' : 'command',
+          },
         ]),
     );
   }
@@ -69,6 +78,7 @@ export function forGenerator(contract) {
 // A source for the generators: AsyncAPI contracts are read from their release URL (their $refs
 // resolve against it); OpenAPI contracts are cleaned for the generator and written locally.
 export async function prepareSource({ service, kind, release, url, contract }) {
+  const draft = /^v?0\./.test(release);
   const domain = domainOf(kind, contract);
   if (!domain) throw new Error(`${service}: no domain in the contract's id or title`);
   let path = url;
@@ -78,7 +88,7 @@ export async function prepareSource({ service, kind, release, url, contract }) {
     path = join(folder, 'openapi.yaml');
     await writeFile(path, stringify(forGenerator(contract)));
   }
-  return { service, kind, release, url, path, domain: { id: domain, name: titleCase(domain) }, owners: [`${domain}-team`] };
+  return { service, kind, release, url, path, draft, domain: { id: domain, name: titleCase(domain) }, owners: [`${domain}-team`] };
 }
 
 const titleCase = (id) => id.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
@@ -109,10 +119,22 @@ async function discover() {
         contract: parse(text),
       });
       sources.push(source);
-      console.log(`+ ${repo.name} ${release.tag_name}: ${file} (domain ${source.domain.id})`);
+      console.log(`+ ${repo.name} ${release.tag_name}: ${file} (domain ${source.domain.id})${source.draft ? ' [draft]' : ''}`);
     }
+    await copyFlows(repo.name, release.tag_name);
   }
   return sources.sort((a, b) => `${a.service}${a.kind}`.localeCompare(`${b.service}${b.kind}`));
+}
+
+async function copyFlows(repo, ref) {
+  const listing = await github(`/repos/${ORG}/${repo}/contents/docs/bpmn?ref=${ref}`);
+  for (const entry of (listing ?? []).filter((e) => e.name.endsWith('.bpmn'))) {
+    const xml = await raw(repo, ref, `docs/bpmn/${entry.name}`);
+    if (!xml) continue;
+    await mkdir(join('public', 'bpmn', repo), { recursive: true });
+    await writeFile(join('public', 'bpmn', repo, entry.name), xml);
+    console.log(`  flow ${repo}/${entry.name}`);
+  }
 }
 
 async function fetchEnvelope() {

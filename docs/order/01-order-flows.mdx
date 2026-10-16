@@ -1,0 +1,19 @@
+---
+title: Order flows
+summary: The order domain's flows as BPMN 2.0, from the process-api-order repository.
+owners:
+  - order-team
+---
+
+import BpmnViewer from '@catalog/components/bpmn-viewer.astro';
+
+The `.bpmn` files live in the
+[process-api-order](https://github.com/azure-intelligence-domain/process-api-order/tree/main/docs/bpmn)
+repository and are copied from its latest release on every catalog build. Edit them in Camunda
+Modeler or demo.bpmn.io.
+
+<BpmnViewer file="bpmn/process-api-order/order-to-delivery.bpmn" title="Order to delivery" height={520} />
+
+<BpmnViewer file="bpmn/process-api-order/order-commands.bpmn" title="Commands: place, amend, change address, reschedule, hold, release, cancel" height={420} />
+
+<BpmnViewer file="bpmn/process-api-order/order-queries.bpmn" title="Queries: retrieve order, retrieve list of orders" height={420} />

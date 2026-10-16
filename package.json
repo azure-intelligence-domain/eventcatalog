@@ -20,6 +20,7 @@
     "@eventcatalog/generator-asyncapi": "7.1.0",
     "@eventcatalog/generator-openapi": "9.1.0",
     "@eventcatalog/linter": "1.2.3",
+    "bpmn-js": "18.31.0",
     "yaml": "2.9.1"
   }
 }

@@ -1,0 +1,67 @@
+---
+id: order
+name: Order
+version: 1.0.0
+summary: >-
+  The lifecycle of an order across systems: placed, confirmed, paid, shipped,
+  delivered, completed, or cancelled on the way.
+owners:
+  - order-team
+badges:
+  - content: Design (0.x)
+    backgroundColor: yellow
+    textColor: yellow
+services:
+  - id: process-api-order
+    version: 0.1.0
+---
+import BpmnViewer from '@catalog/components/bpmn-viewer.astro';
+
+## Overview
+
+The order domain owns the journey of ACME's order 4711 from the talk: every system knows its part,
+the order domain knows the story. It speaks in business facts, never in CRUD: an order is placed,
+amended, rescheduled, put on hold or cancelled; it is never updated or deleted.
+
+| Command | Event |
+|---|---|
+| Place Order | OrderPlaced |
+| Amend Order Lines | OrderAmended |
+| Change Delivery Address | OrderDeliveryAddressChanged |
+| Reschedule Delivery | OrderDeliveryRescheduled |
+| Put Order on Hold / Release Order | OrderPutOnHold / OrderReleased |
+| Cancel Order (soft delete) | OrderCancelled |
+
+Policies turn other domains' facts into order facts: the ERP's decision into OrderConfirmed or
+OrderRejected, finance's InvoiceIssued and PaymentReceived into OrderInvoiced and OrderPaid,
+supply's StockReserved into OrderReadyForShipment, logistics' dispatch and delivery into
+OrderShipped and OrderDelivered. When an order is delivered and paid, it is OrderCompleted.
+
+Every retrieval of an order or a list of orders is tapped with orderid or customerid, so the
+Intelligence domain can see how often orders are looked at, and by whom.
+
+## Order status
+
+```mermaid
+stateDiagram-v2
+    [*] --> placed: OrderPlaced
+    placed --> confirmed: OrderConfirmed
+    placed --> rejected: OrderRejected
+    confirmed --> onHold: OrderPutOnHold
+    onHold --> confirmed: OrderReleased
+    confirmed --> readyForShipment: OrderReadyForShipment
+    readyForShipment --> shipped: OrderShipped
+    shipped --> delivered: OrderDelivered
+    delivered --> completed: OrderCompleted
+    placed --> cancelled: OrderCancelled
+    confirmed --> cancelled: OrderCancelled
+    onHold --> cancelled: OrderCancelled
+```
+
+Payment status is separate (`unpaid`, `invoiced`, `paid`): an order can be shipped and still unpaid.
+
+## Order to delivery
+
+<BpmnViewer file="bpmn/process-api-order/order-to-delivery.bpmn" title="Order to delivery (BPMN 2.0)" height={520} />
+
+The command and query flows are on the <Link href="/docs/custom/order/01-order-flows">order flows</Link> page.

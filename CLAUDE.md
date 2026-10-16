@@ -16,3 +16,7 @@ repository; this repository follows ADR 0009.
   link: the catalog is served under `/` (Azure Storage) and `/eventcatalog` (GitHub Pages).
 - Before committing: `npm test`, then `npm run discover && npx eventcatalog generate &&
   npx eventcatalog build` with no broken links.
+- BPMN flows are not written here: they come from `docs/bpmn/` of each repository's latest
+  release (copied by discovery) and are shown with `components/bpmn-viewer.astro` (bpmn-js; the
+  bpmn.io watermark must stay visible).
+- A 0.x release is cataloged as draft. Operations are queries (GET) or commands (other methods).

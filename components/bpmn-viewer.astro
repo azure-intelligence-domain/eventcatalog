@@ -1,0 +1,60 @@
+---
+// BPMN 2.0 viewer (bpmn-js by bpmn.io / Camunda). Usage in an .mdx page:
+//   import BpmnViewer from '@catalog/components/bpmn-viewer.astro';
+//   <BpmnViewer file="bpmn/process-api-order/order-to-delivery.bpmn" title="Order to delivery" />
+// `file` is relative to the catalog root (public/), so it works under every base path.
+// bpmn-js licence: the bpmn.io watermark must stay visible. Do not hide or overlap it.
+const { file, title, height = 460 } = Astro.props; // height: the maximum; the canvas shrinks to the diagram's proportions
+const src = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${file}`;
+---
+<figure class="not-prose bpmn-figure">
+  {title && <figcaption class="bpmn-title">{title}</figcaption>}
+  <div class="bpmn-canvas" data-bpmn-src={src} style={`height:${height}px`}>
+    <p class="bpmn-loading">Loading BPMN diagram…</p>
+  </div>
+  <p class="bpmn-help">
+    Scroll to zoom, drag to pan. Source: <a href={src}>{file.split('/').pop()}</a>{' '}
+    (BPMN 2.0, opens in Camunda Modeler or demo.bpmn.io).
+  </p>
+</figure>
+
+<style>
+  .bpmn-figure { margin: 1.5rem 0; }
+  .bpmn-title { font-weight: 600; margin-bottom: 0.5rem; }
+  .bpmn-canvas { border: 1px solid #d0d7de; border-radius: 8px; background: #fff; position: relative; }
+  .bpmn-loading { padding: 1rem; color: #57606a; }
+  .bpmn-help { font-size: 0.85rem; color: #57606a; margin-top: 0.4rem; }
+</style>
+
+<script>
+  import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
+  import 'bpmn-js/dist/assets/diagram-js.css';
+  import 'bpmn-js/dist/assets/bpmn-js.css';
+
+  for (const canvas of document.querySelectorAll<HTMLElement>('[data-bpmn-src]')) {
+    const viewer = new NavigatedViewer({ container: canvas });
+    fetch(canvas.dataset.bpmnSrc!)
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.text();
+      })
+      .then((xml) => viewer.importXML(xml))
+      .then(() => {
+        canvas.querySelector('.bpmn-loading')?.remove();
+        const bpmnCanvas = viewer.get('canvas') as {
+          viewbox: () => { inner: { width: number; height: number } };
+          resized: () => void;
+          zoom: (mode: string) => void;
+        };
+        // Fit the canvas height to the diagram, so wide flows do not leave empty space below.
+        const { inner } = bpmnCanvas.viewbox();
+        const fitted = Math.round((canvas.clientWidth * inner.height) / inner.width) + 48;
+        canvas.style.height = `${Math.max(220, Math.min(fitted, parseInt(canvas.style.height, 10)))}px`;
+        bpmnCanvas.resized();
+        bpmnCanvas.zoom('fit-viewport');
+      })
+      .catch((error) => {
+        canvas.innerHTML = `<p class="bpmn-loading">Could not load the diagram (${error.message}).</p>`;
+      });
+  }
+</script>

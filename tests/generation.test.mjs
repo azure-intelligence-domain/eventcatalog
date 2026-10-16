@@ -67,4 +67,5 @@ test('producers send, consumers receive, APIs land in their domain', async () =>
   assert.ok(existsSync(join(api, 'index.mdx')), 'the REST API lands in the sales domain');
   const operations = readdirSync(join(api, 'queries'));
   assert.deepEqual(operations, ['retrieveOrder'], 'only real operations, no x-summary artefacts');
+  assert.ok(!existsSync(join(api, 'commands')), 'a GET is a query, not a command');
 });

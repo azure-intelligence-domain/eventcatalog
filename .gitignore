@@ -35,3 +35,4 @@ sources.json
 docs/platform/envelope.schema.json
 domains/*/services/
 .sources/
+public/bpmn/
