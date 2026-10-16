@@ -42,3 +42,57 @@ jobs:
           name: catalog
           path: dist
           retention-days: 7
+
+  deploy:
+    name: Deploy to Azure Static Web Apps
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: azure
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      RESOURCE_GROUP: rg-intplat-eventcatalog
+      APP: stapp-intplat-eventcatalog
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: catalog
+          path: dist
+
+      - name: Log in to Azure (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Infrastructure (what-if, then deploy)
+        run: |
+          az deployment group what-if -g "$RESOURCE_GROUP" -n eventcatalog -f infra/main.bicep
+          hostname=$(az deployment group create -g "$RESOURCE_GROUP" -n eventcatalog -f infra/main.bicep \
+            --query properties.outputs.hostname.value -o tsv)
+          echo "CATALOG_HOST=$hostname" >> "$GITHUB_ENV"
+
+      - name: Fetch the deployment token (never stored)
+        run: |
+          token=$(az staticwebapp secrets list -n "$APP" -g "$RESOURCE_GROUP" --query properties.apiKey -o tsv)
+          echo "::add-mask::$token"
+          echo "SWA_TOKEN=$token" >> "$GITHUB_ENV"
+
+      - name: Upload the catalog
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ env.SWA_TOKEN }}
+          action: upload
+          app_location: dist
+          skip_app_build: true
+          skip_api_build: true
+
+      - name: Smoke test
+        run: |
+          curl -fsS "https://${CATALOG_HOST}/" | grep -q "Azure Intelligence Domain"
+          curl -fsS "https://${CATALOG_HOST}/docs/custom/platform/01-the-envelope" | grep -q "correlationid"
+          echo "✅ https://${CATALOG_HOST}"
