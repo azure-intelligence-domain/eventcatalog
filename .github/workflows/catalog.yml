@@ -149,7 +149,7 @@ jobs:
 
       - name: Deployment event
         if: always()
-        uses: azure-intelligence-domain/integration-platform/.github/actions/deployment-event@v1.1.0
+        uses: azure-intelligence-domain/integration-platform/.github/actions/deployment-event@v1.2.0
         with:
           token: ${{ env.EVENTGRID_TOKEN }}
           component: eventcatalog

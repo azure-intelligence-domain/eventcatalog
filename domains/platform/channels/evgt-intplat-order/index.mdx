@@ -1,0 +1,29 @@
+---
+id: evgt-intplat-order
+name: Order events (Event Grid)
+version: 1.0.0
+summary: Event Grid topic for the business events of the Order domain. CloudEvents 1.0, Entra ID only.
+owners:
+- platform-team
+address: https://evgt-intplat-order.belgiumcentral-1.eventgrid.azure.net/api/events
+protocols:
+- https
+deliveryGuarantee: at-least-once
+---
+
+## Overview
+
+The Event Grid custom topic of the Order domain: every business event the Order domain
+publishes goes here, as a CloudEvent (<Link href="/docs/custom/platform/01-the-envelope">the envelope</Link>).
+
+| Property | Value |
+|---|---|
+| Resource | `evgt-intplat-order`, Belgium Central |
+| Endpoint | `https://evgt-intplat-order.belgiumcentral-1.eventgrid.azure.net/api/events` |
+| Schema | CloudEvents 1.0, structured mode |
+| Authentication | Microsoft Entra ID only (local auth disabled). Producers need the EventGrid Data Sender role. |
+| Delivery | One Event Grid subscription per consumer, delivering into that consumer's Service Bus queue |
+| Diagnostics | Publish and delivery failures to Log Analytics |
+
+Producers in the Order domain and the events they publish appear on the domain page as soon as
+their contracts are released.

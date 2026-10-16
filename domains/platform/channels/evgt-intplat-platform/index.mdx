@@ -2,7 +2,7 @@
 id: evgt-intplat-platform
 name: Platform events (Event Grid)
 version: 1.0.0
-summary: 'Event Grid topic for platform events: every gateway mutation, every agent action and every deployment. CloudEvents 1.0, Entra ID only.'
+summary: 'Event Grid topic for platform events: every gateway query and mutation, every agent action and every deployment. CloudEvents 1.0, Entra ID only.'
 owners:
 - platform-team
 address: https://evgt-intplat-platform.belgiumcentral-1.eventgrid.azure.net/api/events
@@ -19,8 +19,9 @@ the API or building block.
 
 | Event type | Published by | When |
 |---|---|---|
-| `com.acme.platform.gateway.mutation` | People gateway (`apim-intplat-demo`) | Every POST, PUT, PATCH or DELETE, when it comes in |
-| `com.acme.platform.agent.action` | Agent gateway (`apim-intplat-agents`) | Every call, with the agent's identity |
+| `com.acme.platform.gateway.query` | People gateway (`apim-intplat-demo`) | Every GET, when it comes in, with business keys (`orderid`, `customerid`) |
+| `com.acme.platform.gateway.mutation` | People gateway (`apim-intplat-demo`) | Every POST, PUT, PATCH or DELETE, when it comes in, with business keys |
+| `com.acme.platform.agent.action` | Agent gateway (`apim-intplat-agents`) | Every call, with the agent's identity and business keys |
 | `com.acme.platform.deployment.completed` | Every pipeline | At the end of every deploy, success or failure |
 | `com.acme.platform.tap.probe` | Platform pipeline | Smoke test after every platform deploy |
 
