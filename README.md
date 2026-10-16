@@ -19,7 +19,8 @@ flowchart LR
     discover --> generate["eventcatalog generate<br/>AsyncAPI + OpenAPI generators"]
     hand["Hand-written here<br/>domains · teams · platform docs"] --> build
     generate --> build["eventcatalog build<br/>static site"]
-    build --> swa["Azure Static Web Apps<br/>Free tier"]
+    build --> storage["Azure Storage static website<br/>Belgium Central"]
+    build --> pages["GitHub Pages<br/>azure-intelligence-domain.github.io/eventcatalog"]
 ```
 
 | Folder | Content | Written by |
@@ -30,6 +31,16 @@ flowchart LR
 | `docs/platform/` | The envelope, contracts and rules, how to get cataloged | hand (the envelope schema is fetched) |
 | `scripts/discover-sources.mjs` | Finds released contracts in the organisation | — |
 | `tests/` | End-to-end: released contracts become the right catalog | — |
+
+## Where it is published
+
+| Host | URL | Base path |
+|---|---|---|
+| GitHub Pages | https://azure-intelligence-domain.github.io/eventcatalog/ | `/eventcatalog` |
+| Azure Storage static website | https://stcatalogxyxd4f2znqkqy.z50.web.core.windows.net | `/` |
+
+Both are built from the same generated content on every run. Internal links in hand-written
+pages use EventCatalog's `<Link href="/docs/...">` so they work under both base paths.
 
 ## How a service gets in
 

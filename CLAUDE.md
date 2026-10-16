@@ -12,5 +12,7 @@ repository; this repository follows ADR 0009.
   infrastructure channels (`domains/platform/channels/`).
 - Domain folder names equal the domain id used in contracts (`urn:...:<domain>:...`).
 - Every owner referenced anywhere must exist in `teams/`.
+- Internal links in hand-written pages use `<Link href="/docs/...">`, never a plain Markdown
+  link: the catalog is served under `/` (Azure Storage) and `/eventcatalog` (GitHub Pages).
 - Before committing: `npm test`, then `npm run discover && npx eventcatalog generate &&
   npx eventcatalog build` with no broken links.

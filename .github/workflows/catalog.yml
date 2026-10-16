@@ -1,7 +1,8 @@
 name: catalog
 
-# Pull requests: build and test. main, daily and on demand: build, then deploy to Azure Static
-# Web Apps (Free) through the GitHub environment "azure" (OIDC, no stored deployment token).
+# Pull requests: build and test. main, daily and on demand: build twice and publish to two hosts:
+# - Azure Storage static website (base "/"), through the GitHub environment "azure" (OIDC);
+# - GitHub Pages (base "/eventcatalog"), https://azure-intelligence-domain.github.io/eventcatalog/
 
 on:
   pull_request:
@@ -35,13 +36,48 @@ jobs:
         run: npm run discover
       - run: npx eventcatalog generate
       - run: npm test
-      - name: Build (broken links fail the build)
+      - name: Build for Azure Storage (base /; broken links fail the build)
+        run: npx eventcatalog build && mv dist dist-storage
+      - name: Build for GitHub Pages (base /eventcatalog)
+        env:
+          CATALOG_BASE: /eventcatalog
         run: npx eventcatalog build
       - uses: actions/upload-artifact@v4
         with:
           name: catalog
-          path: dist
+          path: dist-storage
           retention-days: 7
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  pages:
+    name: Deploy to GitHub Pages
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Smoke test
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          check() { curl -fsSL "${PAGE_URL%/}/$1" | grep -q "$2"; }
+          for attempt in $(seq 1 12); do
+            if check "" "Azure Intelligence Domain" && check "docs/custom/platform/01-the-envelope/" "correlationid" \
+               && check "docs/domains/platform/1.0.0" "Integration Platform"; then
+              echo "✅ $PAGE_URL"; exit 0
+            fi
+            echo "attempt $attempt: not served yet"; sleep 10
+          done
+          exit 1
 
   deploy:
     name: Deploy to the storage static website

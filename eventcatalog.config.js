@@ -39,7 +39,8 @@ export default {
   theme: 'sunset',
   output: 'static',
   trailingSlash: false,
-  base: '/',
+  // '/' on the storage static website; '/eventcatalog' on GitHub Pages (project site).
+  base: process.env.CATALOG_BASE ?? '/',
   search: {
     type: 'resource',
   },
