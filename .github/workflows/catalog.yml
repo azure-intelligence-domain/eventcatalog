@@ -95,10 +95,10 @@ jobs:
           # A freshly enabled static website can take a minute before it serves content.
           check() { curl -fsS "$CATALOG_URL/$1" | grep -q "$2"; }
           for attempt in $(seq 1 12); do
-            if check "" "Azure Intelligence Domain" && check "docs/custom/platform/01-the-envelope/" "correlationid"; then
+            if check "" "Azure Intelligence Domain" && check "docs/custom/platform/01-the-envelope/" "correlationid" && check "docs/domains/sales/1.0.0" "Sales"; then
               echo "✅ $CATALOG_URL"; exit 0
             fi
-            for page in "" "index.html" "docs/custom/platform/01-the-envelope/"; do
+            for page in "" "docs/custom/platform/01-the-envelope/" "docs/domains/sales/1.0.0" "docs/domains/sales/1.0.0/"; do
               echo "attempt $attempt: /$page -> $(curl -s -o /dev/null -w '%{http_code}' "$CATALOG_URL/$page")"
             done
             sleep 10
