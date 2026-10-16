@@ -5,11 +5,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cpSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync, existsSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { parse } from 'yaml';
-import { domainOf } from '../scripts/discover-sources.mjs';
+import { prepareSource } from '../scripts/discover-sources.mjs';
 
 const CONTRACTS = 'https://raw.githubusercontent.com/azure-intelligence-domain/contracts/v1.1.0/templates';
 const SERVICES = [
@@ -24,8 +24,9 @@ async function sources() {
   return Promise.all(
     SERVICES.map(async ({ service, kind, file }) => {
       const url = `${CONTRACTS}/${file}`;
-      const domain = domainOf(kind, parse(await (await fetch(url)).text()));
-      return { service, kind, url, domain: { id: domain, name: domain }, owners: [`${domain}-team`] };
+      const contract = parse(await (await fetch(url)).text());
+      const source = await prepareSource({ service, kind, release: 'v1.1.0', url, contract });
+      return { ...source, path: source.path.startsWith('http') ? source.path : join(process.cwd(), source.path) };
     }),
   );
 }
@@ -62,6 +63,8 @@ test('producers send, consumers receive, APIs land in their domain', async () =>
   assert.ok(existsSync(join(message, 'schema.json')), 'the producer owns the message schema');
   assert.ok(!existsSync(join(supply, 'process-api-fulfilment', 'events')), 'the consumer only refers to it');
 
-  const api = join(catalog, 'domains', 'sales', 'services', 'system-api-salesforce', 'index.mdx');
-  assert.ok(existsSync(api), 'the REST API lands in the sales domain');
+  const api = join(catalog, 'domains', 'sales', 'services', 'system-api-salesforce');
+  assert.ok(existsSync(join(api, 'index.mdx')), 'the REST API lands in the sales domain');
+  const operations = readdirSync(join(api, 'queries'));
+  assert.deepEqual(operations, ['retrieveOrder'], 'only real operations, no x-summary artefacts');
 });

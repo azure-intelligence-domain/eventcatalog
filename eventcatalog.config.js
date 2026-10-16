@@ -19,7 +19,7 @@ function generators() {
     if (!groups.has(key)) groups.set(key, { kind: source.kind, domain: source.domain, services: [] });
     groups.get(key).services.push({
       id: source.service,
-      path: source.url,
+      path: source.path,
       owners: source.owners,
     });
   }

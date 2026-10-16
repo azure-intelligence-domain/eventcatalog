@@ -1,0 +1,29 @@
+---
+id: evgt-intplat-finance
+name: Finance events (Event Grid)
+version: 1.0.0
+summary: Event Grid topic for the business events of the Finance domain. CloudEvents 1.0, Entra ID only.
+owners:
+- platform-team
+address: https://evgt-intplat-finance.belgiumcentral-1.eventgrid.azure.net/api/events
+protocols:
+- https
+deliveryGuarantee: at-least-once
+---
+
+## Overview
+
+The Event Grid custom topic of the Finance domain: every business event the Finance domain
+publishes goes here, as a CloudEvent ([the envelope](/docs/custom/platform/01-the-envelope)).
+
+| Property | Value |
+|---|---|
+| Resource | `evgt-intplat-finance`, Belgium Central |
+| Endpoint | `https://evgt-intplat-finance.belgiumcentral-1.eventgrid.azure.net/api/events` |
+| Schema | CloudEvents 1.0, structured mode |
+| Authentication | Microsoft Entra ID only (local auth disabled). Producers need the EventGrid Data Sender role. |
+| Delivery | One Event Grid subscription per consumer, delivering into that consumer's Service Bus queue |
+| Diagnostics | Publish and delivery failures to Log Analytics |
+
+Producers in the Finance domain and the events they publish appear on the domain page as soon as
+their contracts are released.

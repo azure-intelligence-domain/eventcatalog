@@ -1,0 +1,32 @@
+---
+id: sbns-intplat-demo
+name: Subscriber queues (Service Bus)
+version: 1.0.0
+summary: Service Bus namespace holding one queue, with its own dead-letter queue, per event consumer. Entra ID only.
+owners:
+- platform-team
+address: sbns-intplat-demo.servicebus.windows.net
+protocols:
+- amqp
+deliveryGuarantee: at-least-once
+---
+
+## Overview
+
+Every consumer of events owns one queue in this namespace, fed by an Event Grid subscription on
+the event types it declared in its own AsyncAPI contract. Each queue has its own dead-letter
+queue: this is where the shipment requests of the ACME 4711 story end up after deployment v2.4.
+
+| Property | Value |
+|---|---|
+| Resource | `sbns-intplat-demo`, Belgium Central, Basic tier |
+| Queues | `sbq-<consumer>`, one per consuming building block (added with each consumer) |
+| Authentication | Microsoft Entra ID only (local auth disabled). Consumers need the Azure Service Bus Data Receiver role on their own queue. |
+| Diagnostics | Operational logs to Log Analytics |
+
+```mermaid
+flowchart LR
+    topic[["Event Grid topic of a domain"]] -- "subscription per consumer" --> queue[("sbq-(consumer)")]
+    queue --> consumer["Consumer"]
+    queue -. "after max delivery attempts" .-> dlq[("dead-letter queue")]
+```

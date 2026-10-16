@@ -12,7 +12,8 @@
 // Set GITHUB_TOKEN to avoid the GitHub API rate limit for anonymous requests.
 
 import { mkdir, writeFile } from 'node:fs/promises';
-import { parse } from 'yaml';
+import { join } from 'node:path';
+import { parse, stringify } from 'yaml';
 
 const ORG = process.env.CATALOG_ORG ?? 'azure-intelligence-domain';
 const TOPIC = 'eventcatalog';
@@ -44,6 +45,42 @@ export function domainOf(kind, contract) {
   return match?.[1].trim().toLowerCase().replaceAll(' ', '-');
 }
 
+const HTTP_METHODS = new Set(['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']);
+
+// The OpenAPI generator treats every key of a path item as an HTTP method, including the adidas
+// x-summary and OpenAPI's own path-level parameters, summary and description. Hand it a copy with
+// only operations per path; path-level parameters move onto each operation, so nothing is lost.
+export function forGenerator(contract) {
+  const copy = structuredClone(contract);
+  for (const [path, item] of Object.entries(copy.paths ?? {})) {
+    const shared = item.parameters ?? [];
+    copy.paths[path] = Object.fromEntries(
+      Object.entries(item)
+        .filter(([key]) => HTTP_METHODS.has(key))
+        .map(([method, operation]) => [
+          method,
+          { ...operation, parameters: [...shared, ...(operation.parameters ?? [])] },
+        ]),
+    );
+  }
+  return copy;
+}
+
+// A source for the generators: AsyncAPI contracts are read from their release URL (their $refs
+// resolve against it); OpenAPI contracts are cleaned for the generator and written locally.
+export async function prepareSource({ service, kind, release, url, contract }) {
+  const domain = domainOf(kind, contract);
+  if (!domain) throw new Error(`${service}: no domain in the contract's id or title`);
+  let path = url;
+  if (kind === 'openapi') {
+    const folder = join('.sources', service);
+    await mkdir(folder, { recursive: true });
+    path = join(folder, 'openapi.yaml');
+    await writeFile(path, stringify(forGenerator(contract)));
+  }
+  return { service, kind, release, url, path, domain: { id: domain, name: titleCase(domain) }, owners: [`${domain}-team`] };
+}
+
 const titleCase = (id) => id.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
 
 async function discover() {
@@ -64,17 +101,15 @@ async function discover() {
     for (const [kind, file] of Object.entries(CONTRACT_FILES)) {
       const text = await raw(repo.name, release.tag_name, file);
       if (!text) continue;
-      const domain = domainOf(kind, parse(text));
-      if (!domain) throw new Error(`${repo.name}/${file}: no domain in its id or title`);
-      sources.push({
+      const source = await prepareSource({
         service: repo.name,
         kind,
         release: release.tag_name,
         url: `${RAW}/${ORG}/${repo.name}/${release.tag_name}/${file}`,
-        domain: { id: domain, name: titleCase(domain) },
-        owners: [`${domain}-team`],
+        contract: parse(text),
       });
-      console.log(`+ ${repo.name} ${release.tag_name}: ${file} (domain ${domain})`);
+      sources.push(source);
+      console.log(`+ ${repo.name} ${release.tag_name}: ${file} (domain ${source.domain.id})`);
     }
   }
   return sources.sort((a, b) => `${a.service}${a.kind}`.localeCompare(`${b.service}${b.kind}`));
