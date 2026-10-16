@@ -1,0 +1,23 @@
+---
+id: logistics
+name: Logistics
+version: 1.0.0
+summary: 'Shipments and the third-party logistics (3PL) partner: getting the goods to the customer.'
+owners:
+- logistics-team
+---
+
+## Overview
+
+The logistics domain knows the shipment. In the demo story, this is where order 4711 gets stuck:
+after deployment v2.4 of the stock-to-3PL flow, the partner rejects the shipment request and it
+ends up in the dead-letter queue.
+
+## Business keys
+
+`orderid`, `partnerid`, `customerid`
+
+## Services and events
+
+Services and events of this domain appear here automatically as soon as their repository
+releases a contract.

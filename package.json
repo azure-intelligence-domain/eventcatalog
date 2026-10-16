@@ -1,0 +1,25 @@
+{
+  "name": "eventcatalog",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "eventcatalog dev",
+    "editor": "npx @eventcatalog/editor@latest",
+    "build": "eventcatalog build",
+    "start": "eventcatalog start",
+    "preview": "eventcatalog preview",
+    "generate": "eventcatalog generate",
+    "federate": "eventcatalog federate",
+    "export": "eventcatalog export",
+    "lint": "eventcatalog-linter",
+    "test": "node --test 'tests/*.test.mjs'",
+    "discover": "node scripts/discover-sources.mjs"
+  },
+  "dependencies": {
+    "@eventcatalog/core": "5.2.1",
+    "@eventcatalog/generator-asyncapi": "7.1.0",
+    "@eventcatalog/generator-openapi": "9.1.0",
+    "@eventcatalog/linter": "1.2.3",
+    "yaml": "2.9.1"
+  }
+}

@@ -1,0 +1,63 @@
+---
+title: The envelope
+summary: Every event carries its context. The one rule of the integration platform.
+owners:
+  - platform-team
+---
+
+> Standardise the envelope, not the payload.
+
+Every event on the platform is a [CloudEvent](https://cloudevents.io/) in structured JSON mode
+(`application/cloudevents+json`). Whatever the payload, the envelope tells you **who and what**
+the event is about (business keys), **which journey** it belongs to (correlation id) and
+**where it came from and which contract it follows** (source and type).
+
+```json
+{
+  "specversion": "1.0",
+  "id": "a1f3-77c2",
+  "type": "com.acme.stock.reserved",
+  "source": "/wms/stock-to-3pl/v2.4",
+  "time": "2026-10-07T14:02:00Z",
+  "datacontenttype": "application/json",
+  "correlationid": "ord-4711",
+  "customerid": "ACME",
+  "orderid": "4711",
+  "data": { "warehouseId": "BRU-01", "reservedQuantity": 12 }
+}
+```
+
+| Part | Attributes | Rule |
+|---|---|---|
+| CloudEvents core | `specversion`, `id`, `source`, `type`, `time`, `datacontenttype` | Required. `time` in UTC. `type` is reverse-DNS with at least four segments. |
+| Journey | `correlationid` | Required, for example `ord-4711`. |
+| Business keys | `customerid`, `orderid`, `partnerid` | At least one is required. |
+| Tracing | `traceparent`, `tracestate` | Optional, W3C Trace Context. |
+| Payload | `data` | Defined per event type in the producer's contract, camelCase. |
+
+Producers cannot send unknown attributes or empty values; consumers ignore attributes they do not
+know (tolerant reader).
+
+## Schema
+
+This is the envelope schema of the latest release of the
+[contracts](https://github.com/azure-intelligence-domain/contracts) repository, fetched when the
+catalog is built.
+
+<SchemaViewer file="envelope.schema.json" title="Envelope schema" expand={true} />
+
+## Use it
+
+Python services build and validate envelopes with the `integration-envelope` library:
+
+```python
+from integration_envelope import BusinessKeys, new_event
+
+event = new_event(
+    type="com.acme.supply.stock.reserved",
+    source="/system-api-wms/1.0.0",
+    correlation_id="ord-4711",
+    keys=BusinessKeys(customer_id="ACME", order_id="4711"),
+    data={"warehouseId": "BRU-01", "reservedQuantity": 12},
+)
+```

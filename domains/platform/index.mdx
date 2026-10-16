@@ -1,0 +1,36 @@
+---
+id: platform
+name: Integration Platform
+version: 1.0.0
+summary: 'The base every domain stands on: one gateway, one envelope, contracts on every interface, events between domains and one trace per journey.'
+owners:
+- platform-team
+---
+
+## Overview
+
+The integration platform carries every hand-off between the business domains. No point-to-point
+shortcuts: if two systems exchange something, the platform sees it. That is what makes the
+Intelligence domain possible later.
+
+It is built API-led:
+
+```mermaid
+flowchart TB
+    consumers(["Consumers"]) --> apim{{"API Management"}}
+    apim --> experience["Experience APIs"]
+    experience --> process["Process APIs"]
+    process -- "publish" --> events[["Event Grid → Service Bus queue per subscriber"]]
+    events -- "subscribe" --> process
+    process --> system["System APIs"]
+    system --> backends[("Source systems")]
+```
+
+## What the platform guarantees
+
+| Guarantee | How |
+|---|---|
+| Every event carries its context | The [envelope](/docs/custom/platform/01-the-envelope): CloudEvents + `correlationid` + business keys |
+| Every interface has a contract | OpenAPI and AsyncAPI, checked against the [adidas API guidelines](/docs/custom/platform/02-contracts-and-rules) |
+| No breaking changes | The contract check compares every change with the last release |
+| Everything is cataloged | Released contracts appear here automatically ([how](/docs/custom/platform/03-add-your-service)) |
