@@ -77,6 +77,14 @@ properties:
   type: string
   required: false
   description: Key of the request that created it.
+- name: ERP_Order_Number__c
+  type: string
+  required: false
+  description: 'References: SAP sales order (also Invoice_Number__c, Reservation_Id__c, Shipment_Id__c, ...).'
+- name: Order_Milestones__r
+  type: array
+  required: false
+  description: 'Related list: the order''s timeline (Fact__c, Domain__c, Occurred_At__c).'
 - name: CreatedDate
   type: date-time
   required: true
@@ -91,6 +99,6 @@ properties:
 
 Salesforce's Order record: the system of record of every order. Salesforce naming: PascalCase and __c custom fields.
 
-Order and OrderItem are simulated in Cosmos DB (backend-systems); Account, Opportunity and Product are Salesforce's own, not simulated yet.
+Order, OrderItem, Account and Product are simulated in Cosmos DB (backend-systems, system-api-salesforce 1.1.0); Opportunity is not simulated yet.
 
 <EntityPropertiesTable />

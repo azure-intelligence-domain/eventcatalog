@@ -39,12 +39,18 @@ properties:
   enum:
   - open
   - paid
+- name: creditNoteNumber
+  type: string
+  required: false
+  description: The credit note that reversed it; it can no longer be paid.
+  references: CreditNote
+  relationType: references
 ---
 
 ## Overview
 
 What the customer is billed for one sales order.
 
-Built (system-api-sap 1.1.0, finance-intake 1.0.0). Kept in the simulated SAP, in SAP's own tables (VBAK, VBRK).
+Built (system-api-sap 1.2.0, finance-intake 1.1.0). Kept in the simulated SAP, in SAP's own tables (VBAK, VBRK).
 
 <EntityPropertiesTable />

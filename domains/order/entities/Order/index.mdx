@@ -80,6 +80,20 @@ properties:
   type: string
   required: false
   description: Why it was cancelled (soft delete).
+- name: references
+  type: OrderReferences
+  required: false
+  description: Where the order lives in the other domains' systems.
+  references: OrderReferences
+  relationType: references
+- name: timeline
+  type: array
+  required: true
+  description: Every business fact about the order, from every domain.
+  items:
+    type: OrderMilestone
+  references: OrderMilestone
+  relationType: hasMany
 - name: createdAt
   type: date-time
   required: true
@@ -94,6 +108,6 @@ properties:
 
 The order across its lifecycle: a state machine, with payment status as a separate dimension.
 
-Built (process-api-order 1.0.0). The order is kept in Salesforce, the system of record.
+Built (process-api-order 1.2.0). The order is kept in Salesforce, the system of record.
 
 <EntityPropertiesTable />

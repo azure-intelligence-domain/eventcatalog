@@ -41,12 +41,20 @@ properties:
   description: Order value.
   references: Money
   relationType: references
+- name: cancelledAt
+  type: date-time
+  required: false
+  description: Cancelled (soft delete), UTC.
+- name: cancellationReason
+  type: string
+  required: false
+  description: Why.
 ---
 
 ## Overview
 
 The ERP's copy of an order, after credit and availability checks: accepted or refused.
 
-Built (system-api-sap 1.1.0, finance-intake 1.0.0). Kept in the simulated SAP, in SAP's own tables (VBAK, VBRK).
+Built (system-api-sap 1.2.0, finance-intake 1.1.0). Kept in the simulated SAP, in SAP's own tables (VBAK, VBRK).
 
 <EntityPropertiesTable />

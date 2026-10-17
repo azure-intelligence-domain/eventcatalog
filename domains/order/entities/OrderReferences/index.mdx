@@ -1,0 +1,60 @@
+---
+id: OrderReferences
+name: Order References
+version: 1.0.0
+summary: 'Value object: the order''s documents in the other domains, recorded from their facts; OrderCancelled names
+  them so each domain undoes its part.'
+owners:
+- order-team
+properties:
+- name: erpOrderNumber
+  type: string
+  required: false
+  description: SAP sales order.
+  references: SalesOrder
+  relationType: references
+- name: invoiceNumber
+  type: string
+  required: false
+  description: SAP invoice.
+  references: Invoice
+  relationType: references
+- name: creditNoteNumber
+  type: string
+  required: false
+  description: SAP credit note.
+  references: CreditNote
+  relationType: references
+- name: reservationId
+  type: string
+  required: false
+  description: WMS reservation.
+  references: StockReservation
+  relationType: references
+- name: warehouseId
+  type: string
+  required: false
+  description: Warehouse.
+- name: shipmentId
+  type: string
+  required: false
+  description: 3PL shipment.
+  references: Shipment
+  relationType: references
+- name: trackingNumber
+  type: string
+  required: false
+  description: Tracking number.
+- name: partnerId
+  type: string
+  required: false
+  description: 3PL partner.
+---
+
+## Overview
+
+Value object: the order's documents in the other domains, recorded from their facts; OrderCancelled names them so each domain undoes its part.
+
+Built (process-api-order 1.2.0). The order is kept in Salesforce, the system of record.
+
+<EntityPropertiesTable />

@@ -6,24 +6,32 @@ summary: 'Salesforce Product2: what can be sold, e.g. SKU-1042. Its id is used b
 owners:
 - sales-team
 properties:
-- name: Product2Id
+- name: ProductCode
   type: string
   required: true
-  description: Product id, e.g. SKU-1042.
+  description: 'Product code, e.g. SKU-1042: the productId of every domain.'
 - name: Name
   type: string
   required: true
   description: Product name.
-- name: ProductCode
+- name: Family
   type: string
+  required: false
+  description: Product family.
+- name: StandardPrice
+  type: number
   required: true
-  description: Code.
+  description: List price (standard price book).
+- name: IsActive
+  type: boolean
+  required: true
+  description: For sale.
 ---
 
 ## Overview
 
 Salesforce Product2: what can be sold, e.g. SKU-1042. Its id is used by every domain.
 
-Order and OrderItem are simulated in Cosmos DB (backend-systems); Account, Opportunity and Product are Salesforce's own, not simulated yet.
+Order, OrderItem, Account and Product are simulated in Cosmos DB (backend-systems, system-api-salesforce 1.1.0); Opportunity is not simulated yet.
 
 <EntityPropertiesTable />

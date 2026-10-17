@@ -1,0 +1,38 @@
+---
+id: channel
+name: Channel
+version: 1.0.0
+summary: 'How people reach the platform: the webshop, customer service and the 3PL partner, through the Experience APIs and the customer portal.'
+owners:
+- channel-team
+---
+
+## Overview
+
+The channel domain shapes the platform for the people who use it (ADR 0017). Its Experience APIs
+**decide nothing**: they read what the Process and System APIs know, through the gateway, and pass
+commands to the order domain, which decides.
+
+| Experience API | For | Built as |
+|---|---|---|
+| Webshop | Shopping for a customer, following an order end to end, paying its invoice | A Function composing Order, Salesforce, SAP and the 3PL |
+| Customer Service | Any customer at a glance, any order with what every domain knows; hold, release, reschedule, cancel. Also an AI agent's tool (agent gateway) | A Function composing Order, Salesforce, SAP, WMS and the 3PL |
+| Partner | The 3PL partner's bookings, pick-up and delivery notices | No code: the gateway serves part of the 3PL System API's contract |
+
+The [customer portal](https://azure-intelligence-domain.github.io/customer-portal/) (Vue.js) is
+their front end: staff sign in with Google (`thevaluehub.be` accounts only), and every click is a
+business journey (`Correlation-Id: ord-<orderId>`) in the tap.
+
+## Business keys
+
+`orderid`, `customerid`: the channel adds none of its own.
+
+## Services and events
+
+Services of this domain appear here automatically as soon as their repository releases a contract.
+The channel publishes no events: what its users do becomes the order domain's facts.
+
+## Data model
+
+None of its own: the channel shows the order domain's orders with the finance, supply and
+logistics domains' documents around them.

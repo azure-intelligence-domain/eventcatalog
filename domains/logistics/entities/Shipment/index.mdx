@@ -47,19 +47,30 @@ properties:
 - name: status
   type: string
   required: true
-  description: 'Lifecycle: the partner picks up at once.'
+  description: 'Lifecycle: booked; the partner reports the pick-up (dispatched) and the delivery; cancelled until
+    picked up.'
   enum:
+  - booked
   - dispatched
   - delivered
+  - cancelled
 - name: trackingNumber
   type: string
-  required: false
+  required: true
   description: The partner's tracking number.
+- name: bookedAt
+  type: date-time
+  required: true
+  description: UTC.
 - name: dispatchedAt
   type: date-time
   required: false
   description: UTC.
 - name: deliveredAt
+  type: date-time
+  required: false
+  description: UTC.
+- name: cancelledAt
   type: date-time
   required: false
   description: UTC.
@@ -69,6 +80,6 @@ properties:
 
 The delivery of one order by a 3PL partner.
 
-Built (system-api-3pl 1.0.0, logistics-intake 1.0.0). Kept by the simulated partner speedy-3pl.
+Built (system-api-3pl 1.1.0, logistics-intake 1.1.0, experience-api-partner 1.0.0). Kept by the simulated partner speedy-3pl.
 
 <EntityPropertiesTable />

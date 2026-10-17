@@ -32,15 +32,20 @@ properties:
     type: ReservationLine
   references: ReservationLine
   relationType: hasMany
-- name: status
+- name: lifecycleStatus
   type: string
   required: true
-  description: Lifecycle (released and picked follow later).
+  description: Reserved, or released when the order is cancelled.
   enum:
   - reserved
+  - released
 - name: reservedAt
   type: date-time
   required: true
+  description: UTC.
+- name: releasedAt
+  type: date-time
+  required: false
   description: UTC.
 ---
 
@@ -48,6 +53,6 @@ properties:
 
 Stock set aside for one order.
 
-Built (system-api-wms 1.0.0, supply-intake 1.0.0). Kept in the simulated WMS.
+Built (system-api-wms 1.1.0, supply-intake 1.1.0). Kept in the simulated WMS.
 
 <EntityPropertiesTable />

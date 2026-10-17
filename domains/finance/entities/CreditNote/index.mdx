@@ -1,0 +1,38 @@
+---
+id: CreditNote
+name: Credit Note
+version: 1.0.0
+summary: Reverses an invoice when its sales order is cancelled (SAP credit memo, billing type G2).
+owners:
+- finance-team
+identifier: creditNoteNumber
+properties:
+- name: creditNoteNumber
+  type: string
+  required: true
+  description: Credit memo number, e.g. 70004711.
+- name: invoiceNumber
+  type: string
+  required: true
+  description: The reversed invoice.
+  references: Invoice
+  relationType: references
+- name: amount
+  type: Money
+  required: true
+  description: Amount credited.
+  references: Money
+  relationType: references
+- name: issuedAt
+  type: date-time
+  required: true
+  description: UTC.
+---
+
+## Overview
+
+Reverses an invoice when its sales order is cancelled (SAP credit memo, billing type G2).
+
+Built (system-api-sap 1.2.0, finance-intake 1.1.0). Kept in the simulated SAP, in SAP's own tables (VBAK, VBRK).
+
+<EntityPropertiesTable />

@@ -8,24 +8,32 @@ owners:
 aggregateRoot: true
 identifier: AccountId
 properties:
-- name: AccountId
+- name: AccountNumber
   type: string
   required: true
-  description: Account id, e.g. ACME. Business key customerid.
+  description: Account number, e.g. ACME. Business key customerid.
 - name: Name
   type: string
   required: true
   description: Customer name.
-- name: BillingCountryCode
+- name: Industry
   type: string
   required: false
-  description: ISO 3166-1 alpha-2.
+  description: Industry.
+- name: ShippingCity
+  type: string
+  required: true
+  description: Shipping address, flattened (also Street, PostalCode, CountryCode).
+- name: CurrencyIsoCode
+  type: string
+  required: true
+  description: The customer's currency.
 ---
 
 ## Overview
 
 A customer, e.g. ACME. Its id is the platform's customerid.
 
-Order and OrderItem are simulated in Cosmos DB (backend-systems); Account, Opportunity and Product are Salesforce's own, not simulated yet.
+Order, OrderItem, Account and Product are simulated in Cosmos DB (backend-systems, system-api-salesforce 1.1.0); Opportunity is not simulated yet.
 
 <EntityPropertiesTable />
