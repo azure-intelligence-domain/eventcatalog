@@ -47,9 +47,8 @@ properties:
 - name: status
   type: string
   required: true
-  description: Lifecycle.
+  description: 'Lifecycle: the partner picks up at once.'
   enum:
-  - requested
   - dispatched
   - delivered
 - name: trackingNumber
@@ -70,6 +69,6 @@ properties:
 
 The delivery of one order by a 3PL partner.
 
-Designed; built in step 6 (3PL System API, logistics-intake).
+Built (system-api-3pl 1.0.0, logistics-intake 1.0.0). Kept by the simulated partner speedy-3pl.
 
 <EntityPropertiesTable />

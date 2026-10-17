@@ -35,11 +35,9 @@ properties:
 - name: status
   type: string
   required: true
-  description: Lifecycle.
+  description: Lifecycle (released and picked follow later).
   enum:
   - reserved
-  - released
-  - picked
 - name: reservedAt
   type: date-time
   required: true
@@ -50,6 +48,6 @@ properties:
 
 Stock set aside for one order.
 
-Designed; built in step 6 (WMS System API, supply-intake).
+Built (system-api-wms 1.0.0, supply-intake 1.0.0). Kept in the simulated WMS.
 
 <EntityPropertiesTable />
