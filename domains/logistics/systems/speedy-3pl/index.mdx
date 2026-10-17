@@ -1,0 +1,39 @@
+---
+id: speedy-3pl
+name: 3PL Partner
+version: 1.0.0
+summary: 'Shipment bookings, pick-ups and deliveries at the 3PL partner speedy-3pl (simulated): fed by
+  the logistics intake, reached through its System API.'
+scope: internal
+owners:
+- logistics-team
+badges:
+- content: Simulated source system
+  backgroundColor: gray
+  textColor: gray
+  icon: BeakerIcon
+services:
+- id: system-api-3pl
+- id: logistics-intake
+containers:
+- id: cosmos-intplat-3pl
+entities:
+- id: Partner
+- id: Shipment
+- id: ShipmentLine
+relationships:
+- id: integration-platform-system
+  label: publishes its facts on
+---
+
+## Overview
+
+The logistics intake books a shipment for every order ready to ship (ADR 0015, 0018); the partner reports the pick-up and the delivery through the Partner API. Simulated in Cosmos DB, in the partner's own naming.
+
+## Context
+
+<ContextDiagram />
+
+## Inside
+
+<NodeGraph />

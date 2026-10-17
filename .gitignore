@@ -37,3 +37,5 @@ domains/*/services/
 .sources/
 public/bpmn/
 public/icons/azure/
+containers/
+data-stores.json

@@ -1,0 +1,40 @@
+---
+id: sap
+name: SAP
+version: 1.0.0
+summary: 'Sales orders, invoices, credit notes and payments (simulated): fed by the finance intake, reached
+  through its System API.'
+scope: internal
+owners:
+- finance-team
+badges:
+- content: Simulated source system
+  backgroundColor: gray
+  textColor: gray
+  icon: BeakerIcon
+services:
+- id: system-api-sap
+- id: finance-intake
+containers:
+- id: cosmos-intplat-sap
+entities:
+- id: SalesOrder
+- id: Invoice
+- id: CreditNote
+- id: Payment
+relationships:
+- id: integration-platform-system
+  label: publishes its facts on
+---
+
+## Overview
+
+The finance intake turns order facts into calls on the SAP System API (ADR 0015). Simulated in Cosmos DB, in SAP's own naming (VBAK, VBRK).
+
+## Context
+
+<ContextDiagram />
+
+## Inside
+
+<NodeGraph />

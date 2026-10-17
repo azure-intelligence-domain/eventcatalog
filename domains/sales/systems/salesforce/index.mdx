@@ -1,0 +1,37 @@
+---
+id: salesforce
+name: Salesforce
+version: 1.0.0
+summary: The system of record for orders, customers and products (simulated), reachable only through its
+  System API.
+scope: internal
+owners:
+- sales-team
+badges:
+- content: Simulated source system
+  backgroundColor: gray
+  textColor: gray
+  icon: BeakerIcon
+services:
+- id: system-api-salesforce
+containers:
+- id: cosmos-intplat-salesforce
+entities:
+- id: Account
+- id: Opportunity
+- id: Product
+- id: SalesforceOrder
+- id: SalesforceOrderItem
+---
+
+## Overview
+
+Simulated in Cosmos DB, in Salesforce's own naming ([backend-systems](https://github.com/azure-intelligence-domain/backend-systems)).
+
+## Context
+
+<ContextDiagram />
+
+## Inside
+
+<NodeGraph />

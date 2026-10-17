@@ -1,0 +1,36 @@
+---
+id: order-management
+name: Order Management
+version: 1.0.0
+summary: 'The order domain: its commands, queries and policies decide what happens to an order; Salesforce
+  keeps it (ADR 0013, 0014).'
+scope: internal
+owners:
+- order-team
+services:
+- id: process-api-order
+entities:
+- id: Order
+- id: OrderLine
+- id: OrderReferences
+- id: OrderMilestone
+- id: Money
+- id: DeliveryAddress
+relationships:
+- id: salesforce
+  label: keeps every order in
+- id: integration-platform-system
+  label: publishes order facts on
+---
+
+## Overview
+
+The Order Process API owns the order's lifecycle. It reacts to the facts of finance, supply and logistics, and keeps every order in Salesforce through the Salesforce System API.
+
+## Context
+
+<ContextDiagram />
+
+## Inside
+
+<NodeGraph />

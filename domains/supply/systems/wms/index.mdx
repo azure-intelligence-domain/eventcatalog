@@ -1,0 +1,39 @@
+---
+id: wms
+name: Warehouse (WMS)
+version: 1.0.0
+summary: 'Stock and reservations (simulated): fed by the supply intake, reached through its System API.'
+scope: internal
+owners:
+- supply-team
+badges:
+- content: Simulated source system
+  backgroundColor: gray
+  textColor: gray
+  icon: BeakerIcon
+services:
+- id: system-api-wms
+- id: supply-intake
+containers:
+- id: cosmos-intplat-wms
+entities:
+- id: Warehouse
+- id: StockItem
+- id: StockReservation
+- id: ReservationLine
+relationships:
+- id: integration-platform-system
+  label: publishes its facts on
+---
+
+## Overview
+
+The supply intake turns order facts into calls on the WMS System API (ADR 0015). Simulated in Cosmos DB, in the warehouse's own naming.
+
+## Context
+
+<ContextDiagram />
+
+## Inside
+
+<NodeGraph />

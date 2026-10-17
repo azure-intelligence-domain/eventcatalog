@@ -1,0 +1,46 @@
+---
+id: customer-portal
+name: Customer Portal
+version: 1.0.0
+summary: 'The Vue.js portal and the Experience APIs behind it: the webshop, customer service and the 3PL
+  partner, for staff signed in with Google (ADR 0017).'
+scope: internal
+owners:
+- channel-team
+services:
+- id: experience-api-webshop
+- id: experience-api-customer-service
+- id: experience-api-partner
+relationships:
+- id: integration-platform-system
+  label: reaches everything through the gateway
+- id: order-management
+  label: places, follows, amends and cancels orders
+- id: sap
+  label: shows and pays invoices
+- id: wms
+  label: shows stock reservations
+- id: speedy-3pl
+  label: reports pick-ups and deliveries to
+actors:
+- id: staff
+  name: Staff (@thevaluehub.be)
+  label: shop for customers and serve them, signed in with Google
+  direction: inbound
+- id: partner
+  name: 3PL partner
+  label: reports pick-ups and deliveries (played by staff in the demo)
+  direction: inbound
+---
+
+## Overview
+
+The [customer portal](https://azure-intelligence-domain.github.io/customer-portal/) (Vue.js, [repository](https://github.com/azure-intelligence-domain/customer-portal)) calls only the Experience APIs, through the gateway. The Experience APIs decide nothing: they shape what the order domain and the System APIs say, for the people who use it.
+
+## Context
+
+<ContextDiagram />
+
+## Inside
+
+<NodeGraph />

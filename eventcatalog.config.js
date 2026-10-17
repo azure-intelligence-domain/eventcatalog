@@ -74,6 +74,11 @@ export default {
     onBrokenLinks: 'error',
     onBrokenAnchors: 'error',
   },
+  visualiser: {
+    architectureGraph: {
+      enabled: true,
+    },
+  },
   llmsTxt: {
     enabled: true,
   },

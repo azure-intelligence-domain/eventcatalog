@@ -12,13 +12,16 @@ contracts in each repository (decision:
 ```mermaid
 flowchart LR
     subgraph repos["Repositories with topic eventcatalog"]
-        a["asyncapi.yaml / openapi.yaml<br/>latest release"]
+        a["asyncapi.yaml / openapi.yaml · infra/*.bicep<br/>latest release"]
     end
     contracts["contracts<br/>latest release"] -- "envelope schema" --> discover
-    a --> discover["scripts/discover-sources.mjs<br/>sources.json"]
+    infra["backend-systems · integration-platform<br/>Bicep"] --> stores["scripts/discover-data-stores.mjs<br/>data stores"]
+    a --> discover["scripts/discover-sources.mjs<br/>sources.json + hosting"]
     discover --> generate["eventcatalog generate<br/>AsyncAPI + OpenAPI generators"]
-    hand["Hand-written here<br/>domains · teams · platform docs"] --> build
-    generate --> build["eventcatalog build<br/>static site"]
+    generate --> annotate["scripts/annotate-services.mjs<br/>hosting · icons · writesTo"]
+    stores --> annotate
+    hand["Hand-written here<br/>domains · systems · teams · platform docs"] --> build
+    annotate --> build["eventcatalog build<br/>static site"]
     build --> storage["Azure Storage static website<br/>Belgium Central"]
     build --> pages["GitHub Pages<br/>azure-intelligence-domain.github.io/eventcatalog"]
 ```
@@ -26,10 +29,14 @@ flowchart LR
 | Folder | Content | Written by |
 |---|---|---|
 | `domains/<id>/index.mdx` | The business domains of the talk, plus the platform | hand |
-| `domains/<id>/services/` | Services, APIs and messages | generated (not committed) |
+| `domains/<id>/systems/` | The systems of each domain: their services, data stores, entities, actors and relationships (System Context Diagram) | hand |
+| `domains/<id>/services/` | Services, APIs and messages; how each runs (Azure service, plan, language, region) | generated (not committed) |
+| `containers/` | Data stores: the source systems' Cosmos DB databases, Log Analytics, the dead letters | generated from Bicep (not committed) |
 | `teams/` | Domain teams and the platform team (owners) | hand |
 | `docs/platform/` | The envelope, contracts and rules, how to get cataloged | hand (the envelope schema is fetched) |
-| `scripts/discover-sources.mjs` | Finds released contracts in the organisation | — |
+| `scripts/discover-sources.mjs` | Finds released contracts in the organisation, and how each service runs | — |
+| `scripts/discover-data-stores.mjs` | Reads the data stores from the Bicep | — |
+| `scripts/annotate-services.mjs` | Puts hosting and data stores on the service pages; checks every service is in a system | — |
 | `tests/` | End-to-end: released contracts become the right catalog | — |
 
 ## Where it is published

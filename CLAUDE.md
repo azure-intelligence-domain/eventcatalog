@@ -8,8 +8,14 @@ repository; this repository follows ADR 0009.
 
 - Never write service, API or message pages by hand: they are generated from released
   contracts. Fix the contract in its own repository instead.
-- Hand-written content is limited to domains, teams, `docs/platform/` and the platform's
-  infrastructure channels (`domains/platform/channels/`).
+- Hand-written content is limited to domains, teams, `docs/platform/`, the platform's
+  infrastructure channels (`domains/platform/channels/`) and the systems
+  (`domains/<domain>/systems/`): which services, data stores and entities make up each system,
+  its actors and its relationships. Every released service belongs to exactly one system; the
+  build fails otherwise (`scripts/annotate-services.mjs`).
+- Data stores (`containers/`, generated) come from the Bicep of `backend-systems` and
+  `integration-platform` (`scripts/discover-data-stores.mjs`); who writes to them is added to the
+  service pages.
 - Domain folder names equal the domain id used in contracts (`urn:...:<domain>:...`).
 - Every owner referenced anywhere must exist in `teams/`.
 - Internal links in hand-written pages use `<Link href="/docs/...">`, never a plain Markdown

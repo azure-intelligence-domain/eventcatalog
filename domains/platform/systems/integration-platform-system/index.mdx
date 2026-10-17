@@ -1,0 +1,36 @@
+---
+id: integration-platform-system
+name: Integration Platform
+version: 1.0.0
+summary: 'API Management, Event Grid, Service Bus and the tap: every hand-off between building blocks
+  goes through it (ADR 0010).'
+scope: internal
+owners:
+- platform-team
+services:
+- id: integration-platform
+containers:
+- id: log-intplat-demo
+- id: sttapintplatdemo-deadletters
+entities:
+- id: CloudEvent
+relationships:
+- id: sap
+  label: delivers order facts to (finance intake)
+- id: wms
+  label: delivers order facts to (supply intake)
+- id: speedy-3pl
+  label: delivers order facts to (logistics intake)
+---
+
+## Overview
+
+Two gateways (people and agents), an Event Grid topic per domain, Service Bus and the tap. Every call and every event is recorded (tap by default, ADR 0011); every event that cannot be delivered is kept as a dead letter.
+
+## Context
+
+<ContextDiagram />
+
+## Inside
+
+<NodeGraph />
