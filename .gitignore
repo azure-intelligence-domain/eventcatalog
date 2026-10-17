@@ -36,3 +36,4 @@ docs/platform/envelope.schema.json
 domains/*/services/
 .sources/
 public/bpmn/
+public/icons/azure/

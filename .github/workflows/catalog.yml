@@ -34,7 +34,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: npm run discover
+      - name: Azure icons (official, not committed)
+        run: npm run icons
       - run: npx eventcatalog generate
+      - name: How each service runs, on its page
+        run: npm run annotate
       - run: npm test
       - name: Build for Azure Storage (base /; broken links fail the build)
         run: npx eventcatalog build && mv dist dist-storage

@@ -13,7 +13,9 @@
     "export": "eventcatalog export",
     "lint": "eventcatalog-linter",
     "test": "node --test 'tests/*.test.mjs'",
-    "discover": "node scripts/discover-sources.mjs"
+    "discover": "node scripts/discover-sources.mjs",
+    "annotate": "node scripts/annotate-services.mjs",
+    "icons": "sh scripts/azure-icons.sh"
   },
   "dependencies": {
     "@eventcatalog/core": "5.2.1",

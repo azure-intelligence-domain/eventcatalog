@@ -10,6 +10,9 @@
 // 4. BPMN flows in docs/bpmn/ of the release are copied to public/bpmn/<repository>/, for the
 //    BpmnViewer component.
 // 5. The envelope schema of the latest contracts release is fetched for the platform docs.
+// 6. How each service runs (Azure Functions, a Logic App, or a contract the gateway serves) is read
+//    from the Bicep in infra/ of the release, so there is no list to keep up to date.
+//    scripts/annotate-services.mjs puts it on the service pages after generation.
 //
 // Writes sources.json (read by eventcatalog.config.js) and docs/platform/envelope.schema.json.
 // Set GITHUB_TOKEN to avoid the GitHub API rate limit for anonymous requests.
@@ -91,6 +94,34 @@ export async function prepareSource({ service, kind, release, url, contract }) {
   return { service, kind, release, url, path, draft, domain: { id: domain, name: titleCase(domain) }, owners: [`${domain}-team`] };
 }
 
+const REGIONS = { belgiumcentral: 'Belgium Central', francecentral: 'France Central' };
+
+// How a service runs, from its Bicep: the first compute resource wins. No compute means the
+// gateway serves the contract itself (the Partner API: no code of its own).
+export function hostingOf(bicep) {
+  const region = REGIONS[/param location string = '([a-z]+)'/.exec(bicep)?.[1]];
+  if (/'Microsoft\.Web\/sites@/.test(bicep)) {
+    const runtime = /runtime: \{\s*name: '([a-z-]+)'\s*version: '([\d.]+)'/.exec(bicep);
+    return {
+      type: 'functions',
+      name: 'Azure Functions',
+      plan: /tier: 'FlexConsumption'/.test(bicep) ? 'Flex Consumption' : 'App Service plan',
+      language: runtime ? `${titleCase(runtime[1])} ${runtime[2]}` : undefined,
+      region,
+    };
+  }
+  if (/'Microsoft\.Logic\/workflows@/.test(bicep)) {
+    return { type: 'logic-app', name: 'Logic App', plan: 'Consumption', language: 'Workflow definition', region };
+  }
+  return { type: 'api-management', name: 'API Management', plan: 'Contract only, served by the gateway' };
+}
+
+async function bicepOf(repo, ref) {
+  const tree = await github(`/repos/${ORG}/${repo}/git/trees/${ref}?recursive=1`);
+  const files = (tree?.tree ?? []).filter((e) => e.type === 'blob' && /^infra\/.*\.bicep$/.test(e.path));
+  return (await Promise.all(files.map((f) => raw(repo, ref, f.path)))).join('\n');
+}
+
 const titleCase = (id) => id.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join(' ');
 
 async function discover() {
@@ -108,6 +139,8 @@ async function discover() {
       console.log(`- ${repo.name}: no release yet, skipped`);
       continue;
     }
+    const hosting = hostingOf(await bicepOf(repo.name, release.tag_name));
+    const repository = { url: repo.html_url, language: hosting.language ?? repo.language ?? undefined };
     for (const [kind, file] of Object.entries(CONTRACT_FILES)) {
       const text = await raw(repo.name, release.tag_name, file);
       if (!text) continue;
@@ -118,8 +151,8 @@ async function discover() {
         url: `${RAW}/${ORG}/${repo.name}/${release.tag_name}/${file}`,
         contract: parse(text),
       });
-      sources.push(source);
-      console.log(`+ ${repo.name} ${release.tag_name}: ${file} (domain ${source.domain.id})${source.draft ? ' [draft]' : ''}`);
+      sources.push({ ...source, hosting, repository });
+      console.log(`+ ${repo.name} ${release.tag_name}: ${file} (domain ${source.domain.id}, ${hosting.name})${source.draft ? ' [draft]' : ''}`);
     }
     await copyFlows(repo.name, release.tag_name);
   }
